@@ -14,11 +14,11 @@
       "package": "com.sophielondon.app"
     },
     "android": {
+      "package": "com.sophielondon.app",
       "adaptiveIcon": {
         "name": "Sophie",
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff",
-        "package": "com.sophielondon.app"
+        "backgroundColor": "#ffffff"
       }
     },
     "web": {
