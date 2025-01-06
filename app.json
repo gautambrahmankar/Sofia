@@ -11,10 +11,12 @@
     "ios": {
       "name": "Sophie",
       "supportsTablet": true,
-      "package": "com.sophielondon.app"
+      "bundleIdentifier": "com.sophielondon.app",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
-      "package": "com.sophielondon.app",
+      "bundleIdentifier": "com.sophielondon.app",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "name": "Sophie",
         "foregroundImage": "./assets/images/adaptive-icon.png",
