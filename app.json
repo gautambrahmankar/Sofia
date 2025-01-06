@@ -12,16 +12,19 @@
       "name": "Sophie",
       "supportsTablet": true,
       "bundleIdentifier": "com.sophielondon.app",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "1.0.0"
     },
     "android": {
-      "bundleIdentifier": "com.sophielondon.app",
+      "package": "com.sophielondon.app",
       "googleServicesFile": "./google-services.json",
+      "versionCode": 1,
+      "version": "1.0.0",
       "adaptiveIcon": {
-        "name": "Sophie",
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": []
     },
     "web": {
       "bundler": "metro",
