@@ -1,4 +1,4 @@
-package com.sophie
+package com.sophielondon.app
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
