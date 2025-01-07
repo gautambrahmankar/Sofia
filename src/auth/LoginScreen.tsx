@@ -1,13 +1,58 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from 'react-native';
+import auth from '@react-native-firebase/auth';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Handle user login with email and password
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    try {
+      const userCredential = await auth().signInWithEmailAndPassword(
+        email,
+        password,
+      );
+      const user = userCredential.user;
+      Alert.alert('Success', `Welcome back, ${user.email}!`);
+      navigation.navigate('Main'); // Navigate to the main app after successful login
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  // Handle Firebase authentication errors
+  const handleError = error => {
+    switch (error.code) {
+      case 'auth/invalid-email':
+        Alert.alert('Error', 'Invalid email format.');
+        break;
+      case 'auth/user-not-found':
+        Alert.alert('Error', 'No user found with this email.');
+        break;
+      case 'auth/wrong-password':
+        Alert.alert('Error', 'Incorrect password.');
+        break;
+      default:
+        Alert.alert('Error', error.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sophie</Text>
+      <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -23,9 +68,7 @@ const LoginScreen = ({ navigation }) => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Main')}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
