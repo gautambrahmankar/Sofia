@@ -1,39 +1,38 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Dimensions } from 'react-native';
 
-const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const { height, width } = Dimensions.get('window');
 
+const LoginScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sophie</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
+      {/* Background Pattern */}
+      <Image
+        source={require('../assets/images/Homepage.png')} // Replace with your pattern image
+        style={styles.backgroundPattern}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Main')}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.link}>Don't have an account? Register</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-        <Text style={styles.link}>Forgot Password?</Text>
-      </TouchableOpacity>
+
+      {/* Content */}
+      <View style={styles.content}>
+        {/* Title */}
+        {/* <Text style={styles.title}>SOPHIE</Text> */}
+
+        {/* Subtitle */}
+        {/* <Text style={styles.subtitle}>LONDON</Text> */}
+      </View>
+
+      {/* Buttons at the Bottom */}
+      <View style={styles.buttonsContainer}>
+        {/* Log in Button */}
+        <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={()=> navigation.navigate('Login')}>
+          <Text style={[styles.buttonText, styles.loginButtonText]}>Log in</Text>
+        </TouchableOpacity>
+
+        {/* Sign Up Button */}
+        <TouchableOpacity style={[styles.button, styles.signUpButton]} onPress={()=> navigation.navigate('Signup')} >
+          <Text style={[styles.buttonText, styles.signUpButtonText]}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -41,42 +40,67 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#1E1E1E', // Background color
+  },
+  backgroundPattern: {
+    position: 'absolute',
+    width: width, // Full device width
+    height: height, // Full device height
+    resizeMode: 'cover',
+  },
+  content: {
+    flex: 1, // Fills the remaining space above the buttons
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#f9f9f9',
+    
   },
   title: {
-    fontSize: 28,
+    fontSize: height * 0.05, // 5% of screen height
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
+    color: 'gold',
+    letterSpacing: 2,
+    marginBottom: height * 0.01, // 1% of screen height
   },
-  input: {
-    height: 50,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    backgroundColor: '#fff',
+  subtitle: {
+    fontSize: height * 0.025, // 2.5% of screen height
+    fontWeight: '300',
+    color: 'gold',
+    marginBottom: height * 0.02, // 2% of screen height
+  },
+  buttonsContainer: {
+    width: '100%',
+    paddingHorizontal: width * 0.05, // 5% of screen width
+    paddingBottom: height * 0.03, // Add padding at the bottom (safe area)
+   
   },
   button: {
-    height: 50,
-    backgroundColor: '#4CAF50',
-    justifyContent: 'center',
+    height: height * 0.06, // 6% of screen height
+    width: width * 0.88, // 80% of screen width
+    borderRadius: height * 0.015, // Rounded corners based on device height
     alignItems: 'center',
-    borderRadius: 8,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: height * 0.02, // 2% of screen height
+  },
+  loginButton: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#000',
+    borderWidth: 2,
+  },
+  signUpButton: {
+    backgroundColor: '#000000',
+    borderColor: '#FFFFFF',
+    borderWidth: 2,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: height * 0.02, // 2% of screen height
+    fontWeight: '600',
   },
-  link: {
-    marginTop: 15,
-    textAlign: 'center',
-    color: '#007BFF',
-    fontSize: 16,
+  loginButtonText: {
+    color: '#000000',
+  },
+  signUpButtonText: {
+    color: '#FFFFFF',
   },
 });
 

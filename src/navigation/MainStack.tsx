@@ -4,6 +4,7 @@ import HomeScreen from '../containers/HomeScreen';
 import ProfileScreen from '../containers/ProfileScreen';
 import SettingsScreen from '../containers/SettingsScreen';
 
+
 const Stack = createStackNavigator();
 
 const MainStack = () => {
