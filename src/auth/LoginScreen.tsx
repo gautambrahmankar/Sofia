@@ -16,7 +16,8 @@ import {
 // Configure Google Sign-In
 GoogleSignin.configure({
   webClientId:
-    '470418142403-gohr7pv9qr3hg2s0gdg0cfdgpipe7i1b.apps.googleusercontent.com', // From Firebase Console
+    '470418142403-gohr7pv9qr3hg2s0gdg0cfdgpipe7i1b.apps.googleusercontent.com', // Replace with your Web Client ID
+  offlineAccess: true, // Required to obtain a refresh token
 });
 
 const LoginScreen = ({navigation}) => {
@@ -36,7 +37,7 @@ const LoginScreen = ({navigation}) => {
       );
       const user = userCredential.user;
       Alert.alert('Success', `Welcome back, ${user.email}!`);
-      navigation.navigate('Main');
+      navigation.navigate('Main'); // Navigate to the main app
     } catch (error) {
       handleError(error);
     }
@@ -45,21 +46,42 @@ const LoginScreen = ({navigation}) => {
   // Google Sign-In
   const handleGoogleSignIn = async () => {
     try {
-      await GoogleSignin.hasPlayServices(); // Ensure Play Services are available
+      console.log('Starting Google Sign-In...');
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      console.log('Play Services are available.');
+
       const {idToken} = await GoogleSignin.signIn();
+      console.log('Google Sign-In successful. ID Token:', idToken);
+
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const userCredential = await auth().signInWithCredential(
         googleCredential,
       );
+
+      console.log('Firebase Authentication successful:', userCredential);
       Alert.alert('Success', `Welcome back, ${userCredential.user.email}!`);
-      navigation.navigate('Main');
+      navigation.navigate('Main'); // Navigate to the main app
     } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        Alert.alert('Cancelled', 'Google Sign-In was cancelled.');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        Alert.alert('Error', 'Google Sign-In already in progress.');
+      console.log('Google Sign-In Error:', error); // Log the error object
+      if (error?.code) {
+        switch (error.code) {
+          case statusCodes.SIGN_IN_CANCELLED:
+            Alert.alert('Cancelled', 'Google Sign-In was cancelled.');
+            break;
+          case statusCodes.IN_PROGRESS:
+            Alert.alert('Error', 'Google Sign-In is already in progress.');
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            Alert.alert(
+              'Error',
+              'Google Play Services are not available on this device.',
+            );
+            break;
+          default:
+            Alert.alert('Error', error.message || 'An unknown error occurred.');
+        }
       } else {
-        Alert.alert('Error', error.message);
+        Alert.alert('Error', 'An unexpected error occurred. Please try again.');
       }
     }
   };
@@ -76,7 +98,7 @@ const LoginScreen = ({navigation}) => {
         Alert.alert('Error', 'Incorrect password.');
         break;
       default:
-        Alert.alert('Error', error.message);
+        Alert.alert('Error', error.message || 'An unknown error occurred.');
     }
   };
 
