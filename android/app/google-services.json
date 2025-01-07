@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "470418142403",
+    "project_id": "sohpie-f378f",
+    "storage_bucket": "sohpie-f378f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:470418142403:android:2964ed8be36a2f13011e76",
+        "android_client_info": {
+          "package_name": "com.sophielondon.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtQtRSVu101NaEQmBZKQtGswdlrr1oeS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
