@@ -24,7 +24,7 @@ const ForgotPasswordScreen = ({navigation}) => {
         'Success',
         'A password reset email has been sent to your email address.',
       );
-      navigation.navigate('Login'); // Redirect back to login screen
+      navigation.navigate('LoginEmail'); // Redirect back to login screen
     } catch (error) {
       handleError(error);
     }

@@ -1,106 +1,174 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import LinearGradient from 'react-native-linear-gradient';
 
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 
-const LoginScreen = ({navigation}) => {
+function LoginScreen({navigation}: {navigation: any}) {
   return (
-    <View style={styles.container}>
-      {/* Background Pattern */}
-      <Image
-        source={require('../assets/images/Homepage.png')} // Replace with your pattern image
-        style={styles.backgroundPattern}
-      />
+    <View style={{flex: 1}}>
+      {/* Gradient Section */}
+      <LinearGradient
+        colors={['#E0D9D7', '#DFD7D4']}
+        style={styles.gradientContainer}>
+        <Text style={styles.title}>Sophie</Text>
+        <Text style={styles.subtitle}>
+          The Glow you seek is one treatment away
+        </Text>
 
-      {/* Content */}
-      <View style={styles.content}>
-        {/* Title */}
-        {/* <Text style={styles.title}>SOPHIE</Text> */}
+        <Image
+          source={require('../assets/images/LoginImage.png')} // Replace with your login image path
+          style={styles.image}
+        />
+      </LinearGradient>
 
-        {/* Subtitle */}
-        {/* <Text style={styles.subtitle}>LONDON</Text> */}
-      </View>
+      {/* White Container Section */}
+      <View style={styles.whiteContainer}>
+        <Text style={styles.startText}>Your skin journey starts here!</Text>
 
-      {/* Buttons at the Bottom */}
-      <View style={styles.buttonsContainer}>
-        {/* Log in Button */}
-        <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={()=> navigation.navigate('Login')}>
-          <Text style={[styles.buttonText, styles.loginButtonText]}>Log in</Text>
+        {/* Login with Apple */}
+        <TouchableOpacity
+          style={[styles.button, styles.appleButton]}
+          onPress={() => navigation.navigate('LoginApple')}>
+          <FontAwesome
+            name="apple"
+            size={20}
+            color="white"
+            style={styles.icon}
+          />
+          <Text style={styles.appleButtonText}>Login with Apple</Text>
         </TouchableOpacity>
 
-        {/* Sign Up Button */}
-        <TouchableOpacity style={[styles.button, styles.signUpButton]} onPress={()=> navigation.navigate('Signup')} >
-          <Text style={[styles.buttonText, styles.signUpButtonText]}>Sign Up</Text>
+        {/* Login with Email */}
+        <TouchableOpacity
+          style={[styles.button, styles.emailButton]}
+          onPress={() => navigation.navigate('LoginEmail')}>
+          <MaterialIcons
+            name="email"
+            size={20}
+            color="black"
+            style={styles.icon}
+          />
+          <Text style={[styles.buttonText, {color: 'black'}]}>
+            Login with Email
+          </Text>
+        </TouchableOpacity>
+
+        {/* Login with Google */}
+        <TouchableOpacity
+          style={[styles.button, styles.googleButton]}
+          onPress={() => navigation.navigate('LoginGoogle')}>
+          <FontAwesome
+            name="google"
+            size={20}
+            color="black"
+            style={styles.icon}
+          />
+          <Text style={[styles.buttonText, {color: 'black'}]}>
+            Login with Google
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
+  gradientContainer: {
     flex: 1,
-    backgroundColor: '#1E1E1E', // Background color
-  },
-  backgroundPattern: {
-    position: 'absolute',
-    width: width, // Full device width
-    height: height, // Full device height
-    resizeMode: 'cover',
-  },
-  content: {
-    flex: 1, // Fills the remaining space above the buttons
     alignItems: 'center',
     justifyContent: 'center',
-    
+    paddingTop: 20,
+    paddingBottom: height * 0.07, // To make gradient end before the white container
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   title: {
-    fontSize: height * 0.05, // 5% of screen height
+    fontSize: 32,
     fontWeight: 'bold',
-    color: 'gold',
-    letterSpacing: 2,
-    marginBottom: height * 0.01, // 1% of screen height
+    marginTop: 20,
   },
   subtitle: {
-    fontSize: height * 0.025, // 2.5% of screen height
-    fontWeight: '300',
-    color: 'gold',
-    marginBottom: height * 0.02, // 2% of screen height
+    fontSize: 16,
+    color: '#7a7a7a',
+    textAlign: 'center',
+    marginVertical: 10,
+    paddingHorizontal: 20,
   },
-  buttonsContainer: {
-    width: '100%',
-    paddingHorizontal: width * 0.05, // 5% of screen width
-    paddingBottom: height * 0.03, // Add padding at the bottom (safe area)
-   
+  image: {
+    // width: width * 0.8,
+    // height: height * 0.2,
+    // borderRadius: 18,
+    marginVertical: 20,
+    resizeMode: 'cover',
+  },
+  whiteContainer: {
+    backgroundColor: '#ffffff',
+    flex: 1,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    alignItems: 'center',
+    paddingTop: 20,
+    marginTop: -height * 0.08, // To slightly overlap the gradient section
+  },
+  startText: {
+    fontSize: 18,
+    marginBottom: 20,
   },
   button: {
-    height: height * 0.06, // 6% of screen height
-    width: width * 0.88, // 80% of screen width
-    borderRadius: height * 0.015, // Rounded corners based on device height
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: height * 0.02, // 2% of screen height
+    width: '80%',
+    padding: 15,
+    borderRadius: 30,
+    marginVertical: 10,
   },
-  loginButton: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#000',
-    borderWidth: 2,
+  appleButton: {
+    backgroundColor: 'black',
   },
-  signUpButton: {
-    backgroundColor: '#000000',
-    borderColor: '#FFFFFF',
-    borderWidth: 2,
+  emailButton: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#cccccc',
   },
+  googleButton: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#cccccc',
+  },
+  appleButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
+    color: 'white',
+  },
+
   buttonText: {
-    fontSize: height * 0.02, // 2% of screen height
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
   },
-  loginButtonText: {
-    color: '#000000',
+  createAccountText: {
+    marginTop: 20,
+    fontSize: 14,
+    color: '#7a7a7a',
   },
-  signUpButtonText: {
-    color: '#FFFFFF',
+  linkText: {
+    color: '#007AFF',
+    textDecorationLine: 'underline',
+  },
+  icon: {
+    marginRight: 10,
   },
 });
 

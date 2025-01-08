@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,54 +9,36 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 
-const RegisterScreen = ({navigation}) => {
+const SignupEmail = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleRegister = async () => {
+  // Handle email/password sign-up
+  const handleSignUp = async () => {
     if (!email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
-
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match.');
       return;
     }
-
     try {
       const userCredential = await auth().createUserWithEmailAndPassword(
         email,
         password,
       );
-      const user = userCredential.user;
-      Alert.alert('Success', `Welcome ${user.email}!`);
-      navigation.navigate('Login'); // Redirect to Login Screen after successful registration
+      Alert.alert('Success', `Account created for ${userCredential.user.email}`);
+      navigation.navigate('LoginEmail');
     } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const handleError = error => {
-    switch (error.code) {
-      case 'auth/email-already-in-use':
-        Alert.alert('Error', 'This email is already in use.');
-        break;
-      case 'auth/invalid-email':
-        Alert.alert('Error', 'Invalid email format.');
-        break;
-      case 'auth/weak-password':
-        Alert.alert('Error', 'Password should be at least 6 characters.');
-        break;
-      default:
-        Alert.alert('Error', error.message);
+      Alert.alert('Error', error.message);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
+      <Text style={styles.title}>Sign Up</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -67,24 +49,25 @@ const RegisterScreen = ({navigation}) => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder="Create a password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
       <TextInput
         style={styles.input}
-        placeholder="Confirm Password"
+        placeholder="Confirm password"
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+        <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Already have an account? Login</Text>
-      </TouchableOpacity>
+      <Text style={styles.termsText}>
+        By creating an account or signing up you agree to our{' '}
+        <Text style={styles.termsLink}>Terms and Conditions</Text>.
+      </Text>
     </View>
   );
 };
@@ -113,7 +96,7 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 50,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
@@ -123,12 +106,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  link: {
-    marginTop: 15,
+  termsText: {
     textAlign: 'center',
+    marginTop: 20,
+    fontSize: 14,
+    color: '#555',
+  },
+  termsLink: {
     color: '#007BFF',
-    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
-export default RegisterScreen;
+export default SignupEmail;

@@ -7,14 +7,13 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
 
 const {height, width} = Dimensions.get('window');
 
-function Signup({navigation}: {navigation: any}) {
+function SignupScreen({navigation}: {navigation: any}) {
   return (
     <View style={{flex: 1}}>
       {/* Gradient Section */}
@@ -37,7 +36,9 @@ function Signup({navigation}: {navigation: any}) {
         <Text style={styles.startText}>Your skin journey starts here!</Text>
 
         {/* Sign up with Apple */}
-        <TouchableOpacity style={[styles.button, styles.appleButton]}>
+        <TouchableOpacity
+          style={[styles.button, styles.appleButton]}
+          onPress={() => navigation.navigate('SignupApple')}>
           <FontAwesome
             name="apple"
             size={20}
@@ -48,7 +49,9 @@ function Signup({navigation}: {navigation: any}) {
         </TouchableOpacity>
 
         {/* Sign up with Email */}
-        <TouchableOpacity style={[styles.button, styles.emailButton]}>
+        <TouchableOpacity
+          style={[styles.button, styles.emailButton]}
+          onPress={() => navigation.navigate('SignupEmail')}>
           <MaterialIcons
             name="email"
             size={20}
@@ -61,7 +64,9 @@ function Signup({navigation}: {navigation: any}) {
         </TouchableOpacity>
 
         {/* Sign up with Google */}
-        <TouchableOpacity style={[styles.button, styles.googleButton]}>
+        <TouchableOpacity
+          style={[styles.button, styles.googleButton]}
+          onPress={() => navigation.navigate('SignupGoogle')}>
           <FontAwesome
             name="google"
             size={20}
@@ -76,8 +81,7 @@ function Signup({navigation}: {navigation: any}) {
         {/* Log In link */}
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.createAccountText}>
-            Already have an account?{' '}
-            <Text style={styles.linkText}>Log in</Text>
+            Already have an account? <Text style={styles.linkText}>Log in</Text>
           </Text>
         </TouchableOpacity>
       </View>
@@ -91,10 +95,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 20,
-    paddingBottom: height*0.07, // To make gradient end before the white container
+    paddingBottom: height * 0.07, // To make gradient end before the white container
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
-     },
+  },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
@@ -112,7 +116,7 @@ const styles = StyleSheet.create({
     // height: height * 0.2,
     // borderRadius: 18,
     marginVertical: 20,
-    resizeMode :'cover',
+    resizeMode: 'cover',
   },
   whiteContainer: {
     backgroundColor: '#ffffff',
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     alignItems: 'center',
     paddingTop: 20,
-    marginTop: -height*0.08, // To slightly overlap the gradient section
+    marginTop: -height * 0.08, // To slightly overlap the gradient section
   },
   startText: {
     fontSize: 18,
@@ -149,11 +153,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#cccccc',
   },
-  appleButtonText:{
+  appleButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10,
-    color:'white'
+    color: 'white',
   },
 
   buttonText: {
@@ -175,4 +179,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Signup;
+export default SignupScreen;
