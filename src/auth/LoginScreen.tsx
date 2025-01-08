@@ -6,14 +6,62 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Alert,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 
 const {height, width} = Dimensions.get('window');
 
+// Configure Google Sign-In
+GoogleSignin.configure({
+  webClientId:
+    '470418142403-gohr7pv9qr3hg2s0gdg0cfdgpipe7i1b.apps.googleusercontent.com', // Replace with your Firebase Web Client ID
+  offlineAccess: true, // Required for getting refresh token
+});
+
 function LoginScreen({navigation}: {navigation: any}) {
+  const handleGoogleSignIn = async () => {
+    try {
+      console.log('Starting Google Sign-In...');
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      console.log('Play Services available.');
+
+      const {idToken, user} = await GoogleSignin.signIn();
+      console.log(
+        'Google Sign-In Response:',
+        JSON.stringify({idToken, user}, null, 2),
+      );
+
+      if (!idToken) {
+        throw new Error('ID Token is missing from Google Sign-In response.');
+      }
+
+      console.log('Attempting Firebase Authentication...');
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const userCredential = await auth().signInWithCredential(
+        googleCredential,
+      );
+
+      console.log('Firebase Authentication successful:', userCredential.user);
+      Alert.alert(
+        'Success',
+        `Welcome, ${userCredential.user.displayName || user.name}!`,
+      );
+      navigation.navigate('MainStack'); // Navigate to the main screen
+    } catch (error) {
+      console.error('Google Sign-In Error:', JSON.stringify(error, null, 2));
+      Alert.alert(
+        'Error',
+        error.message ||
+          'An unexpected error occurred during Google Sign-In. Please try again.',
+      );
+    }
+  };
+
   return (
     <View style={{flex: 1}}>
       {/* Gradient Section */}
@@ -66,11 +114,11 @@ function LoginScreen({navigation}: {navigation: any}) {
         {/* Login with Google */}
         <TouchableOpacity
           style={[styles.button, styles.googleButton]}
-          onPress={() => navigation.navigate('LoginGoogle')}>
+          onPress={() => handleGoogleSignIn()}>
           <FontAwesome
             name="google"
             size={20}
-            color="black"
+            color="red"
             style={styles.icon}
           />
           <Text style={[styles.buttonText, {color: 'black'}]}>
@@ -105,9 +153,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   image: {
-    // width: width * 0.8,
-    // height: height * 0.2,
-    // borderRadius: 18,
+    width: width * 0.8,
+    height: height * 0.2,
+    borderRadius: 18,
     marginVertical: 20,
     resizeMode: 'cover',
   },
@@ -152,7 +200,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: 'white',
   },
-
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',

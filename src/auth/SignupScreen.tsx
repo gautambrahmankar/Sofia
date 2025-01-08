@@ -70,7 +70,7 @@ function SignupScreen({navigation}: {navigation: any}) {
           <FontAwesome
             name="google"
             size={20}
-            color="black"
+            color="red"
             style={styles.icon}
           />
           <Text style={[styles.buttonText, {color: 'black'}]}>
