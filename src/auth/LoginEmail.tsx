@@ -13,6 +13,13 @@ const LoginEmail = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Mock function to check user state
+  const checkUserState = async user => {
+    // Example logic; replace with real API call
+    const isNewUser = false; // Assume the user is returning
+    return isNewUser;
+  };
+
   // Handle email/password sign-in
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -25,7 +32,15 @@ const LoginEmail = ({navigation}) => {
         password,
       );
       Alert.alert('Success', `Welcome back, ${userCredential.user.email}!`);
-      navigation.navigate('MainStack');
+
+      const isNewUser = await checkUserState(userCredential.user);
+      if (isNewUser) {
+        // Navigate to SignupFlow for new users
+        navigation.navigate('MainStack', {screen: 'SignupFlow'});
+      } else {
+        // Navigate to HomeScreen for returning users
+        navigation.navigate('MainStack', {screen: 'HomeScreen'});
+      }
     } catch (error) {
       Alert.alert('Error', error.message);
     }
@@ -49,11 +64,9 @@ const LoginEmail = ({navigation}) => {
         onChangeText={setPassword}
         secureTextEntry
       />
-
       <TouchableOpacity style={styles.button} onPress={handleSignIn}>
         <Text style={styles.buttonText}>Log In</Text>
       </TouchableOpacity>
-      <Text style={{marginTop: 2}} />
       <Text
         style={styles.termsLink}
         onPress={() => navigation.navigate('ForgotPasswordScreen')}>
@@ -96,12 +109,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  termsText: {
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 14,
-    color: '#555',
   },
   termsLink: {
     color: '#007BFF',

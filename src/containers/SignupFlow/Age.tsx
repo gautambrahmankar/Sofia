@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,18 +9,18 @@ import {
   Dimensions,
 } from 'react-native';
 
-const { height } = Dimensions.get('window');
+const {height} = Dimensions.get('window');
 
-const AgeSelectionScreen = () => {
+const Age = () => {
   const [selectedAge, setSelectedAge] = useState(null);
 
   // Dynamically generate ages from 18 to 100
-  const ages = Array.from({ length: 83 }, (_, i) => i + 18);
+  const ages = Array.from({length: 83}, (_, i) => i + 18);
 
   const ITEM_HEIGHT = 60; // Height of each item
   const VISIBLE_ITEMS = 3; // Number of visible items
 
-  const handleAgeSelect = (age) => {
+  const handleAgeSelect = age => {
     setSelectedAge(age);
   };
 
@@ -29,7 +29,7 @@ const AgeSelectionScreen = () => {
       {/* Progress Bar */}
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBar}>
-          <View style={[styles.progress, { width: '24%' }]} />
+          <View style={[styles.progress, {width: '24%'}]} />
         </View>
         <Text style={styles.progressText}>24%</Text>
       </View>
@@ -46,32 +46,30 @@ const AgeSelectionScreen = () => {
       {/* Scrollable Age Picker */}
       <FlatList
         data={ages}
-        keyExtractor={(item) => item.toString()}
-        renderItem={({ item }) => (
+        keyExtractor={item => item.toString()}
+        renderItem={({item}) => (
           <TouchableOpacity
             style={
               selectedAge === item
                 ? [styles.ageOption, styles.selectedOption]
                 : styles.ageOption
             }
-            onPress={() => handleAgeSelect(item)}
-          >
+            onPress={() => handleAgeSelect(item)}>
             <Text
               style={
                 selectedAge === item
                   ? [styles.ageText, styles.selectedText]
                   : styles.ageText
-              }
-            >
+              }>
               {item}
             </Text>
           </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.ageList}
-        snapToAlignment={"center"}
+        snapToAlignment={'center'}
         snapToInterval={ITEM_HEIGHT}
-        decelerationRate={"fast"}
+        decelerationRate={'fast'}
         bounces={false}
         getItemLayout={(data, index) => ({
           length: ITEM_HEIGHT,
@@ -92,8 +90,7 @@ const AgeSelectionScreen = () => {
           } else {
             alert('Please select your age to continue.');
           }
-        }}
-      >
+        }}>
         <Text style={styles.continueText}>Continue</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -182,4 +179,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AgeSelectionScreen;
+export default Age;
