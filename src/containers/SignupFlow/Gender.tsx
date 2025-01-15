@@ -52,7 +52,7 @@ const Gender = ({navigation}) => {
             <Icon
               name={item.icon}
               size={30}
-              color={selectedGender === item.label ? 'white' : 'black'}
+              color={selectedGender === item.label ? 'green' : 'white'}
             />
             <Text
               style={[
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 20, 
+    marginBottom: 20,
   },
   continueText: {
     color: 'white',

@@ -11,7 +11,7 @@ import {
 
 const {height} = Dimensions.get('window');
 
-const Age = () => {
+const Age = ({navigation}) => {
   const [selectedAge, setSelectedAge] = useState(null);
 
   // Dynamically generate ages from 18 to 100
@@ -87,6 +87,7 @@ const Age = () => {
         onPress={() => {
           if (selectedAge) {
             console.log(`Selected Age: ${selectedAge}`);
+            navigation.navigate('Skintype', { Age : `${selectedAge}` });
           } else {
             alert('Please select your age to continue.');
           }
@@ -160,6 +161,7 @@ const styles = StyleSheet.create({
   ageText: {
     fontSize: 16,
     color: 'black',
+    paddingHorizontal : 10,
   },
   selectedText: {
     color: 'black',

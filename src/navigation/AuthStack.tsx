@@ -12,17 +12,29 @@ import LoginEmail from '../auth/LoginEmail';
 import LoginApple from '../auth/LoginApple';
 import LoginGoogle from '../auth/LoginGoogle';
 import SignupScreen from '../auth/SignupScreen';
+import Age from '../containers/SignupFlow/Age';
+import Concerns from '../containers/SignupFlow/Concerns';
+import Experience from '../containers/SignupFlow/Experience';
+import Gender from '../containers/SignupFlow/Gender';
+import Goals from '../containers/SignupFlow/Goals';
+import Skintone from '../containers/SignupFlow/Skintone';
+import Skintype from '../containers/SignupFlow/Skintype';
 
 const Stack = createStackNavigator();
 
 const AuthStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="Gender"
       screenOptions={{headerShown: false}}>
       <Stack.Screen
         name="LoginScreen"
         component={LoginScreen}
+        options={{headerShown: false}}
+      />
+       <Stack.Screen
+        name="Age"
+        component={Age}
         options={{headerShown: false}}
       />
       <Stack.Screen
@@ -77,6 +89,36 @@ const AuthStack = () => {
       <Stack.Screen
         name="MainStack"
         component={MainStack}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Concerns"
+        component={Concerns}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Experience"
+        component={Experience}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Gender"
+        component={Gender}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Goals"
+        component={Goals}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Skintype"
+        component={Skintype}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Skintone"
+        component={Skintone}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
