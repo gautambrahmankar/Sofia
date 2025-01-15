@@ -13,11 +13,9 @@ const LoginEmail = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Mock function to check user state
+  // Check if the user is new based on metadata
   const checkUserState = async user => {
-    // Example logic; replace with real API call
-    const isNewUser = false; // Assume the user is returning
-    return isNewUser;
+    return user.metadata.creationTime === user.metadata.lastSignInTime;
   };
 
   // Handle email/password sign-in
@@ -31,14 +29,10 @@ const LoginEmail = ({navigation}) => {
         email,
         password,
       );
-      Alert.alert('Success', `Welcome back, ${userCredential.user.email}!`);
-
       const isNewUser = await checkUserState(userCredential.user);
       if (isNewUser) {
-        // Navigate to SignupFlow for new users
         navigation.navigate('MainStack', {screen: 'SignupFlow'});
       } else {
-        // Navigate to HomeScreen for returning users
         navigation.navigate('MainStack', {screen: 'HomeScreen'});
       }
     } catch (error) {

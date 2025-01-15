@@ -74,7 +74,7 @@ function LoginScreen({navigation}: {navigation: any}) {
         </Text>
 
         <Image
-          source={require('../assets/images/LoginImage.png')} // Replace with your login image path
+          source={require('../assets/images/LoginImage.png')} // Replace with your signup image path
           style={styles.image}
         />
       </LinearGradient>
