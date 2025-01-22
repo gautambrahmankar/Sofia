@@ -25,7 +25,7 @@ const Stack = createStackNavigator();
 const AuthStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Gender"
+      initialRouteName="MainStack"
       screenOptions={{headerShown: false}}>
       <Stack.Screen
         name="LoginScreen"

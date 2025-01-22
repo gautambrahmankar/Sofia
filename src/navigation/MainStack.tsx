@@ -9,15 +9,15 @@ const Stack = createStackNavigator();
 
 const MainStack = () => {
   return (
-    <Stack.Navigator initialRouteName="SignupFlow">
+    <Stack.Navigator initialRouteName="ProfileScreen" >
       <Stack.Screen
         name="SignupFlow"
         component={SignupFlow}
         options={{headerShown: false}}
       />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-      <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} options={{headerShown: false}} />
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen}  options={{headerShown: false}}/>
+      <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{headerShown: false}} />
     </Stack.Navigator>
   );
 };
