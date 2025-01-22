@@ -113,7 +113,7 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff', paddingHorizontal: 16},
+  container: {flex: 1, backgroundColor: '#fff', paddingHorizontal: 16, paddingBottom: '10%'},
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -122,8 +122,8 @@ const styles = StyleSheet.create({
   },
   title: {fontSize: 20, fontWeight: 'bold'},
   bellIcon: {padding: 8},
-  scanSection: {alignItems: 'center', marginVertical: 16},
-  faceImage: {width: 150, height: 150, borderRadius: 75, marginBottom: 8},
+  scanSection: {alignItems: 'center',height: '25%', marginBottom: '15%' ,marginTop:'10%' },
+  faceImage: {width: '100%', height: '100%', borderRadius: 10, marginBottom: 8},
   scanButton: {backgroundColor: '#ddd', padding: 10, borderRadius: 5},
   scanButtonText: {fontWeight: 'bold'},
   section: {marginVertical: 16},
