@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 
 const MainStack = () => {
   return (
-    <Stack.Navigator initialRouteName="ProfileScreen" >
+    <Stack.Navigator initialRouteName="HomeScreen" >
       <Stack.Screen
         name="SignupFlow"
         component={SignupFlow}
