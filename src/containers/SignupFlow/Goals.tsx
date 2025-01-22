@@ -1,9 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
-const Goals = () => {
-  const navigation = useNavigation();
+const Goals = ({navigation}) => {
 
   return (
     <View style={styles.container}>
@@ -37,7 +35,7 @@ const Goals = () => {
 
       <TouchableOpacity
         style={styles.continueButton}
-        onPress={() => navigation.navigate('NextScreen')} // Replace 'NextScreen' with your next screen name
+        onPress={() => navigation.navigate('HomeScreen')} // Replace 'NextScreen' with your next screen name
       >
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
