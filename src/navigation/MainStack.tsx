@@ -1,11 +1,9 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from '../containers/HomeScreen';
-//import ProfileScreen from '../containers/ProfileScreen';
-import SettingsScreen from '../containers/SettingsScreen';
 import SignupFlow from '../containers/SignupFlow';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProfileScreen from '../containers/ProfileScreen';
 import ExploreScreen from '../containers/ExploreScreen';
@@ -103,11 +101,6 @@ const MainStack = () => {
       <Stack.Screen
         name="HomeTabs"
         component={HomeTabs}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="SettingsScreen"
-        component={SettingsScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

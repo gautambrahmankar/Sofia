@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from '../auth/LoginScreen';
 import ForgotPasswordScreen from '../auth/ForgotPasswordScreen';
@@ -19,24 +19,41 @@ import Gender from '../containers/SignupFlow/Gender';
 import Goals from '../containers/SignupFlow/Goals';
 import Skintone from '../containers/SignupFlow/Skintone';
 import Skintype from '../containers/SignupFlow/Skintype';
+import auth from '@react-native-firebase/auth';
+import {ActivityIndicator, View} from 'react-native';
 
 const Stack = createStackNavigator();
 
 const AuthStack = () => {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(currentUser => {
+      setUser(currentUser);
+      setInitializing(false);
+    });
+
+    return unsubscribe; // Cleanup listener
+  }, []);
+
+  if (initializing) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
+  }
   return (
     <Stack.Navigator
-      initialRouteName="MainStack"
+      initialRouteName={user ? 'MainStack' : 'Login'} // 👈 Dynamically set the initial route
       screenOptions={{headerShown: false}}>
       <Stack.Screen
         name="LoginScreen"
         component={LoginScreen}
         options={{headerShown: false}}
       />
-       <Stack.Screen
-        name="Age"
-        component={Age}
-        options={{headerShown: false}}
-      />
+      <Stack.Screen name="Age" component={Age} options={{headerShown: false}} />
       <Stack.Screen
         name="SignupScreen"
         component={SignupScreen}

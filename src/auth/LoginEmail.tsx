@@ -30,10 +30,11 @@ const LoginEmail = ({navigation}) => {
         password,
       );
       const isNewUser = await checkUserState(userCredential.user);
+
       if (isNewUser) {
         navigation.navigate('MainStack', {screen: 'SignupFlow'});
       } else {
-        navigation.navigate('MainStack', {screen: 'HomeScreen'});
+        navigation.navigate('MainStack', {screen: 'HomeTabs'}); // ✅ Fix: Navigate to HomeTabs
       }
     } catch (error) {
       Alert.alert('Error', error.message);

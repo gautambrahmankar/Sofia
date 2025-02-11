@@ -1,9 +1,32 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import auth from '@react-native-firebase/auth';
 import FactorsHome from './SignupFlow/FactorsHome';
+import {ScrollView} from 'react-native-gesture-handler';
 
-const ProfileHeader = () => {
+const ProfileScreen = ({navigation}) => {
+  // Logout function
+  const handleLogout = async () => {
+    try {
+      await auth().signOut();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }], // Ensure full reset to login screen
+      });
+    } catch (error) {
+      Alert.alert('Error', 'Failed to log out. Please try again.');
+    }
+  };
+  
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -16,49 +39,37 @@ const ProfileHeader = () => {
           <Icon name="settings" size={24} color="#000" />
         </TouchableOpacity>
       </View>
+      <ScrollView>
+        {/* Profile Section */}
+        <View style={styles.profileSection}>
+          <Image
+            source={require('../assets/images/Jessica.png')}
+            style={styles.profileImage}
+          />
+          <Text style={styles.profileName}>Jesica Bren</Text>
+          <TouchableOpacity style={styles.editIcon}>
+            <Icon name="edit" size={20} color="gray" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Profile Section */}
-      <View style={styles.profileSection}>
-        <Image
-          source={require('../assets/images/Jessica.png')} // Replace with actual image path
-          style={styles.profileImage}
-        />
-        <Text style={styles.profileName}>Jesica Bren</Text>
-        <TouchableOpacity style={styles.editIcon}>
-          <Icon name="edit" size={20} color="gray" />
+        {/* Concern and Goal Tabs */}
+        <View style={styles.cardContainer}>
+          <View style={styles.tabsContainer}>
+            <TouchableOpacity style={[styles.tab, styles.activeTab]}>
+              <Text style={styles.tabTextActive}>Concern</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.tab}>
+              <Text style={styles.tabText}>Goal</Text>
+            </TouchableOpacity>
+          </View>
+          <FactorsHome />
+        </View>
+
+        {/* Logout Button */}
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
-      </View>
-
-      {/* Concern and Goal Tabs */}
-      <View style={styles.cardContainer}>
-        <View style={styles.tabsContainer}>
-          <TouchableOpacity style={[styles.tab, styles.activeTab]}>
-            <Text style={styles.tabTextActive}>Concern</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tab}>
-            <Text style={styles.tabText}>Goal</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.concernsContainer}>
-          <View style={styles.concernItem}>
-            <Icon name="check-box" size={18} color="#00C853" />
-            <Text style={styles.concernText}>Acne</Text>
-          </View>
-          <View style={styles.concernItem}>
-            <Icon name="check-box" size={18} color="#00C853" />
-            <Text style={styles.concernText}>Dark circles</Text>
-          </View>
-          <View style={styles.concernItem}>
-            <Icon name="check-box" size={18} color="#00C853" />
-            <Text style={styles.concernText}>Pores</Text>
-          </View>
-        </View>
-        <FactorsHome/>
-        {/* <View style={styles.placeholder}>
-          Placeholder for Image
-          <Text>Image Placeholder</Text>
-        </View> */}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -82,29 +93,23 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   profileSection: {
-    flexDirection: 'row', // Align items horizontally
-    alignItems: 'center', // Center items vertically
-    justifyContent:'space-between',
-    marginTop: 20, // Add space from the top
-    paddingHorizontal: 4, // Adjust horizontal padding
-    paddingBottom : 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    paddingHorizontal: 4,
+    paddingBottom: 15,
   },
   profileImage: {
-    width: 60, // Adjust the size of the image
+    width: 60,
     height: 60,
-    borderRadius: 30, // Make the image circular
-    marginRight: 16, // Add space between the image and text
-  },
-  profileTextContainer: {
-    flex: 1, // Allow the text to take available space
+    borderRadius: 30,
+    marginRight: 16,
   },
   profileName: {
     fontSize: 18,
     fontWeight: '600',
     color: '#2E1153',
-  },
-  editIcon: {
-    padding: 8, // Add padding to make it easier to tap
   },
   cardContainer: {
     backgroundColor: '#FFF',
@@ -137,33 +142,18 @@ const styles = StyleSheet.create({
   tabTextActive: {
     color: '#000000',
   },
-  concernsContainer: {
-    flexDirection: 'column',
-    // alignItems: 'center',
-    marginLeft: '5%',
-    marginTop: '3%',
-  },
-  concernItem: {
-    flexDirection: 'row',
+  logoutButton: {
+    marginTop: 30,
+    backgroundColor: '#FF3B30',
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: 'center',
-    marginRight: 16,
   },
-  concernText: {
-    marginLeft: 4,
-    fontSize: 14,
-    color: '#333',
-  },
-  placeholder: {
-    position: 'absolute',
-    right: 0,
-    bottom: -10,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
+  logoutButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
-export default ProfileHeader;
+export default ProfileScreen;
