@@ -93,6 +93,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('sophie.keystore')
+            storePassword 'sophie'
+            keyAlias 'sophie'
+            keyPassword 'sophie'
+        } 
     }
     buildTypes {
         debug {
