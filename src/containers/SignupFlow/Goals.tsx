@@ -1,18 +1,18 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 const Goals = ({navigation}) => {
-
   return (
     <View style={styles.container}>
       <View style={styles.progressContainer}>
-        <View style={[styles.progressBar, { width: '100%' }]} />
+        <View style={[styles.progressBar, {width: '100%'}]} />
         <Text style={styles.progressText}>100%</Text>
       </View>
 
       <Text style={styles.questionText}>What are your goals?</Text>
       <Text style={styles.subText}>
-        Choose as many as you want. This will help us improve the app and your experience.
+        Choose as many as you want. This will help us improve the app and your
+        experience.
       </Text>
 
       <View style={styles.optionsContainer}>
@@ -35,7 +35,7 @@ const Goals = ({navigation}) => {
 
       <TouchableOpacity
         style={styles.continueButton}
-        onPress={() => navigation.navigate('HomeScreen')} // Replace 'NextScreen' with your next screen name
+        onPress={() => navigation.navigate('HomeTabs')} // Replace 'NextScreen' with your next screen name
       >
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>

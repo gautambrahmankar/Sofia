@@ -5,11 +5,10 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  TextInput,
   ScrollView,
 } from 'react-native';
 
-const App = () => {
+const HomeScreen = () => {
   return (
     <ScrollView style={styles.container}>
       {/* Header Section */}
@@ -113,7 +112,12 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff', paddingHorizontal: 16, paddingBottom: '10%'},
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingBottom: '10%',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -122,7 +126,12 @@ const styles = StyleSheet.create({
   },
   title: {fontSize: 20, fontWeight: 'bold'},
   bellIcon: {padding: 8},
-  scanSection: {alignItems: 'center',height: '25%', marginBottom: '15%' ,marginTop:'10%' },
+  scanSection: {
+    alignItems: 'center',
+    height: '25%',
+    marginBottom: '15%',
+    marginTop: '10%',
+  },
   faceImage: {width: '100%', height: '100%', borderRadius: 10, marginBottom: 8},
   scanButton: {backgroundColor: '#ddd', padding: 10, borderRadius: 5},
   scanButtonText: {fontWeight: 'bold'},
@@ -135,12 +144,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     width: '48%',
-    backgroundColor:'#F4F0EF',
+    backgroundColor: '#F4F0EF',
     borderColor: '#F4F0EF',
   },
   productType: {fontSize: 16, marginBottom: 8},
   exploreButton: {backgroundColor: '#000000', padding: 8, borderRadius: 10},
-  exploreText: {fontWeight: 'bold', color:'white'},
+  exploreText: {fontWeight: 'bold', color: 'white'},
   dermatologistCard: {
     flexDirection: 'row',
     borderWidth: 1,
@@ -192,4 +201,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default HomeScreen;
