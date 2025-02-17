@@ -8,6 +8,8 @@ import {
   ScrollView,
 } from 'react-native';
 import ProductCard from './ProductCard';
+import DermatologistsList from './DermatologistList';
+import KnowYourSkinCard from './KnowYourSkinCard';
 
 const HomeScreen = () => {
   return (
@@ -33,27 +35,11 @@ const HomeScreen = () => {
       </View>
 
       {/* Range of Products Section */}
-      <ProductCard/>
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Range of products</Text>
-        <View style={styles.productRow}>
-          <View style={styles.productCard}>
-            <Text style={styles.productType}>Dry</Text>
-            <TouchableOpacity style={styles.exploreButton}>
-              <Text style={styles.exploreText}>Explore</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.productCard}>
-            <Text style={styles.productType}>Oily</Text>
-            <TouchableOpacity style={styles.exploreButton}>
-              <Text style={styles.exploreText}>Explore</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View> */}
+      <ProductCard />
 
       {/* Consult Dermatologist Section */}
-      <View style={styles.section}>
+      <DermatologistsList/>
+      {/* <View style={styles.section}>
         <Text style={styles.sectionTitle}>Consult Dermatologist</Text>
         <View style={styles.dermatologistCard}>
           <Image
@@ -70,18 +56,11 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </View> */}
 
       {/* Know Your Skin Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Know your skin</Text>
-        <View style={styles.profileCard}>
-          <Text>Let’s personalize your profile</Text>
-          <TouchableOpacity style={styles.startButton}>
-            <Text style={styles.startButtonText}>Start now</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <KnowYourSkinCard/>
+
 
       {/* Our Results Section */}
       <View style={styles.section}>
@@ -137,7 +116,7 @@ const styles = StyleSheet.create({
   faceImage: {width: '100%', height: '100%', borderRadius: 10, marginBottom: 8},
   scanButton: {backgroundColor: '#ddd', padding: 10, borderRadius: 5},
   scanButtonText: {fontWeight: 'bold'},
-  section: {marginVertical: 16, marginTop:20},
+  section: {marginVertical: 16, marginTop: 20},
   sectionTitle: {fontSize: 18, fontWeight: 'bold', marginBottom: 8},
   productRow: {flexDirection: 'row', justifyContent: 'space-between'},
   productCard: {
@@ -157,6 +136,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 16,
+    borderColor: '#F4F0EF',
+    backgroundColor: '#F4F0EF',
+    justifyContent:'space-around',
   },
   dermatologistImage: {
     width: '25%',
@@ -167,17 +149,22 @@ const styles = StyleSheet.create({
   dermatologistInfo: {flex: 1},
   dermatologistName: {fontSize: 16, fontWeight: 'bold'},
   knowMoreButton: {
+    width: '40%',
     marginTop: 8,
-    backgroundColor: '#ddd',
-    padding: 8,
-    borderRadius: 5,
+    backgroundColor: '#000000',
+    padding: '3%',
+    borderRadius: 12,
+    justifyContent:'center',
+    // alignSelf: 'center',
   },
-  knowMoreText: {fontWeight: 'bold'},
+  knowMoreText: {fontWeight: 'bold', color:'white', textAlign:'center'},
   profileCard: {
     padding: 16,
     borderWidth: 1,
     borderRadius: 8,
     alignItems: 'center',
+    borderColor: '#F4F0EF',
+    backgroundColor: '#F4F0EF',
   },
   startButton: {
     marginTop: 8,
@@ -193,6 +180,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     width: '48%',
+    borderColor: '#F4F0EF',
   },
   resultImage: {width: 50, height: 50, borderRadius: 25, marginBottom: 8},
   bottomNav: {
