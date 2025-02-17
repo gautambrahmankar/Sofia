@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Image,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 
@@ -34,7 +35,7 @@ const LoginEmail = ({navigation}) => {
       if (isNewUser) {
         navigation.navigate('MainStack', {screen: 'SignupFlow'});
       } else {
-        navigation.navigate('MainStack', {screen: 'HomeTabs'}); // ✅ Fix: Navigate to HomeTabs
+        navigation.navigate('MainStack', {screen: 'HomeTabs'});
       }
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -43,29 +44,63 @@ const LoginEmail = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Log in</Text>
+      <Text style={styles.label}>Email</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Enter email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
+      <Text style={styles.label}>Password</Text>
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder="Enter password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
-        <Text style={styles.buttonText}>Log In</Text>
-      </TouchableOpacity>
-      <Text
-        style={styles.termsLink}
+      <TouchableOpacity
         onPress={() => navigation.navigate('ForgotPasswordScreen')}>
-        Forgot Password?
+        <Text style={styles.forgotPassword}>Forgot password?</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+        <Text style={styles.buttonText}>Log in</Text>
+      </TouchableOpacity>
+      <View style={styles.orContainer}>
+        <View style={styles.line} />
+        <Text style={styles.orText}>Or Login with</Text>
+        <View style={styles.line} />
+      </View>
+      <View style={styles.socialContainer}>
+        <TouchableOpacity style={styles.socialButton}>
+          <Image
+            source={require('../assets/images/facebook.png')}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.socialButton}>
+          <Image
+            source={require('../assets/images/google.png')}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.socialButton}>
+          <Image
+            source={require('../assets/images/apple.png')}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.signUpText}>
+        Don’t have an account?{' '}
+        <Text
+          style={styles.signUpLink}
+          onPress={() => navigation.navigate('SignupScreen')}>
+          Sign up
+        </Text>
       </Text>
     </View>
   );
@@ -81,8 +116,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 5,
   },
   input: {
     height: 50,
@@ -92,6 +132,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     backgroundColor: '#fff',
+  },
+  forgotPassword: {
+    textAlign: 'right',
+    color: '#000',
+    marginBottom: 20,
   },
   button: {
     height: 50,
@@ -105,10 +150,48 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  termsLink: {
-    color: '#007BFF',
-    fontWeight: 'bold',
+  orContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#ddd',
+  },
+  orText: {
+    marginHorizontal: 10,
+    color: '#666',
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  socialButton: {
+    width: 100,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  icon: {
+    width: 24,
+    height: 24,
+  },
+  signUpText: {
     textAlign: 'center',
+    color: '#000',
+    bottom: 10,
+    position: 'absolute',
+  },
+  signUpLink: {
+    fontWeight: 'bold',
+    color: '#000',
   },
 });
 

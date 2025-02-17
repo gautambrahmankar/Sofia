@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import Icon from 'react-native-vector-icons/Feather';
 
 const ForgotPasswordScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -45,24 +46,41 @@ const ForgotPasswordScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Reset Password</Text>
-      <Text style={styles.instructions}>
-        Enter your email address to receive a password reset link.
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backButton}>
+        <Icon
+          style={{top: 12, left: 10}}
+          name="arrow-left"
+          size={24}
+          color="#000"
+        />
+      </TouchableOpacity>
+      <Text style={styles.title}>Forgot password?</Text>
+      <Text style={styles.subtitle}>
+        Don’t worry! It happens. Please enter the email associated with your
+        account.
       </Text>
+      <Text style={styles.label}>Email address</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Enter your email address"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
       <TouchableOpacity style={styles.button} onPress={handlePasswordReset}>
-        <Text style={styles.buttonText}>Send Reset Email</Text>
+        <Text style={styles.buttonText}>Send Reset Link</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Back to Login</Text>
-      </TouchableOpacity>
+      <Text style={styles.footerText}>
+        Remember password?{' '}
+        <Text
+          style={styles.loginLink}
+          onPress={() => navigation.navigate('LoginScreen')}>
+          Log in
+        </Text>
+      </Text>
     </View>
   );
 };
@@ -72,19 +90,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    width: 50,
+    height: 50,
+    marginHorizontal: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    textAlign: 'center',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
     marginBottom: 20,
   },
-  instructions: {
+  label: {
     fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#555',
+    fontWeight: '500',
+    marginBottom: 5,
   },
   input: {
     height: 50,
@@ -97,21 +128,26 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 50,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
+    marginBottom: 20,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  link: {
-    marginTop: 15,
+  footerText: {
     textAlign: 'center',
-    color: '#007BFF',
-    fontSize: 16,
+    color: '#000',
+    bottom: 10,
+    position: 'absolute',
+  },
+  loginLink: {
+    fontWeight: 'bold',
+    color: '#000',
   },
 });
 
