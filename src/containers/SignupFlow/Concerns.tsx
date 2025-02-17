@@ -56,7 +56,7 @@ const Concerns = ({navigation}) => {
     {
       id: 'acneScars',
       label: 'Acne Scars',
-      image: require('../../assets/images/acne.png'),
+      image: require('../../assets/images/acne1.png'),
     },
   ];
 

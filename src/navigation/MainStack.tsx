@@ -35,7 +35,7 @@ const HomeTabs = () => {
             <Icon
               name="home"
               size={24}
-              color={focused ? '#5A31F4' : '#A1A1A1'}
+              color={focused ? '#000000' : '#A1A1A1'}
             />
           ),
         }}
@@ -48,7 +48,7 @@ const HomeTabs = () => {
             <Icon
               name="shopping-cart"
               size={24}
-              color={focused ? '#5A31F4' : '#A1A1A1'}
+              color={focused ? '#000000' : '#A1A1A1'}
             />
           ),
         }}
@@ -68,7 +68,7 @@ const HomeTabs = () => {
             <Icon
               name="explore"
               size={24}
-              color={focused ? '#5A31F4' : '#A1A1A1'}
+              color={focused ? '#000000' : '#A1A1A1'}
             />
           ),
         }}
@@ -81,7 +81,7 @@ const HomeTabs = () => {
             <Icon
               name="person"
               size={24}
-              color={focused ? '#5A31F4' : '#A1A1A1'}
+              color={focused ? '#000000' : '#A1A1A1'}
             />
           ),
         }}
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#5A31F4',
+    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
     top: -20,

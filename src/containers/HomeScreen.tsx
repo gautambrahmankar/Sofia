@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import ProductCard from './ProductCard';
 
 const HomeScreen = () => {
   return (
@@ -32,7 +33,8 @@ const HomeScreen = () => {
       </View>
 
       {/* Range of Products Section */}
-      <View style={styles.section}>
+      <ProductCard/>
+      {/* <View style={styles.section}>
         <Text style={styles.sectionTitle}>Range of products</Text>
         <View style={styles.productRow}>
           <View style={styles.productCard}>
@@ -48,7 +50,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </View> */}
 
       {/* Consult Dermatologist Section */}
       <View style={styles.section}>
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
   faceImage: {width: '100%', height: '100%', borderRadius: 10, marginBottom: 8},
   scanButton: {backgroundColor: '#ddd', padding: 10, borderRadius: 5},
   scanButtonText: {fontWeight: 'bold'},
-  section: {marginVertical: 16},
+  section: {marginVertical: 16, marginTop:20},
   sectionTitle: {fontSize: 18, fontWeight: 'bold', marginBottom: 8},
   productRow: {flexDirection: 'row', justifyContent: 'space-between'},
   productCard: {
