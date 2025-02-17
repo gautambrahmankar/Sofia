@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 
-const Experience = ({ navigation }) => {
+const Experience = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   const options = [
-    { id: 'regularly', label: 'I do it regularly' },
-    { id: 'few_times', label: 'I tried a few times' },
-    { id: 'no_idea', label: 'I have no idea' },
+    {id: 'regularly', label: 'I do it regularly'},
+    {id: 'few_times', label: 'I tried a few times'},
+    {id: 'no_idea', label: 'I have no idea'},
   ];
 
   return (
@@ -22,19 +21,21 @@ const Experience = ({ navigation }) => {
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBarFill, { width: '84%' }]} />
+          <View style={[styles.progressBarFill, {width: '84%'}]} />
         </View>
         <Text style={styles.progressText}>84%</Text>
       </View>
 
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      {/* <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>◀</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Heading */}
       <View style={styles.headingContainer}>
-        <Text style={styles.title}>How experienced are you in skincare routine?</Text>
+        <Text style={styles.title}>
+          How experienced are you in skincare routine?
+        </Text>
         <Text style={styles.subtitle}>
           We will use this info to improve your experience in the app.
         </Text>
@@ -42,21 +43,19 @@ const Experience = ({ navigation }) => {
 
       {/* Options */}
       <View style={styles.optionsContainer}>
-        {options.map((option) => (
+        {options.map(option => (
           <TouchableOpacity
             key={option.id}
             style={[
               styles.option,
               selectedOption === option.id && styles.selectedOption,
             ]}
-            onPress={() => setSelectedOption(option.id)}
-          >
+            onPress={() => setSelectedOption(option.id)}>
             <Text
               style={[
                 styles.optionLabel,
                 selectedOption === option.id && styles.selectedOptionLabel,
-              ]}
-            >
+              ]}>
               {option.label}
             </Text>
           </TouchableOpacity>
@@ -65,14 +64,14 @@ const Experience = ({ navigation }) => {
 
       {/* Continue Button */}
       <TouchableOpacity
-        style={[styles.continueButton, !selectedOption && styles.disabledButton]}
+        style={styles.continueButton}
         onPress={() => {
           if (selectedOption) {
-            navigation.navigate('Goals', { experience: selectedOption });
+            navigation.navigate('Goals', {experience: selectedOption});
+          } else {
+            alert('Please select your experience to continue.');
           }
-        }}
-        disabled={!selectedOption}
-      >
+        }}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -147,7 +146,7 @@ const styles = StyleSheet.create({
   optionLabel: {
     fontSize: 16,
     color: '#333',
-    fontWeight : '500',
+    fontWeight: '500',
   },
   selectedOptionLabel: {
     color: '#FFF',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -7,20 +7,23 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { useWindowDimensions } from 'react-native';
+import {useWindowDimensions} from 'react-native';
 
 const Skintype = ({navigation}) => {
   const [selectedSkinType, setSelectedSkinType] = useState(null);
   const skinTypes = [
-    { id: 'dry', label: '', image: require('../../assets/images/Dry.png') },
-    { id: 'oily', label: '', image: require('../../assets/images/Oily.png') },
-    { id: 'normal', label: '', image: require('../../assets/images/Normal.png') },
-    { id: 'acne', label: '', image: require('../../assets/images/Acne.png') },
-    { id: 'combination', label: '', image: require('../../assets/images/Combination.png') },
+    {id: 'dry', label: '', image: require('../../assets/images/Dry.png')},
+    {id: 'oily', label: '', image: require('../../assets/images/Oily.png')},
+    {id: 'normal', label: '', image: require('../../assets/images/Normal.png')},
+    {id: 'acne', label: '', image: require('../../assets/images/acne1.png')},
+    {
+      id: 'combination',
+      label: '',
+      image: require('../../assets/images/Combination.png'),
+    },
   ];
-  const { width } = useWindowDimensions();
 
-  const handleSkinTypeSelection = (id) => {
+  const handleSkinTypeSelection = id => {
     setSelectedSkinType(id);
   };
 
@@ -29,35 +32,35 @@ const Skintype = ({navigation}) => {
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBarFill, { width: '36%' }]} />
+          <View style={[styles.progressBarFill, {width: '36%'}]} />
         </View>
         <Text style={styles.progressText}>36%</Text>
       </View>
 
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => {}}>
+      {/* <TouchableOpacity style={styles.backButton} onPress={() => {}}>
         <Text style={styles.backButtonText}>◀</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Heading */}
       <View style={styles.headingContainer}>
         <Text style={styles.title}>What’s your skin type?</Text>
         <Text style={styles.subtitle}>
-          Identifying your skin type allows us to offer more effective recommendations.
+          Identifying your skin type allows us to offer more effective
+          recommendations.
         </Text>
       </View>
 
       {/* Skin Type Options */}
       <View style={styles.optionsContainer}>
-        {skinTypes.map((skinType) => (
+        {skinTypes.map(skinType => (
           <TouchableOpacity
             key={skinType.id}
             style={[
               styles.option,
               selectedSkinType === skinType.id && styles.selectedOption,
             ]}
-            onPress={() => handleSkinTypeSelection(skinType.id)}
-          >
+            onPress={() => handleSkinTypeSelection(skinType.id)}>
             <Image source={skinType.image} style={styles.image} />
             <Text style={styles.optionLabel}>{skinType.label}</Text>
           </TouchableOpacity>
@@ -73,11 +76,9 @@ const Skintype = ({navigation}) => {
             navigation.navigate('Skintone', {type: `${selectedSkinType}`});
             // Navigate to the next screen or perform an action here
           } else {
-            alert('Please select a gender to continue.');
+            alert('Please select a Skintype to continue.');
           }
-        }}
-        disabled={!selectedSkinType}
-      >
+        }}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -122,7 +123,9 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   headingContainer: {
-    marginVertical: 16,
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
@@ -140,14 +143,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    alignItems:'center',
-    marginVertical: 16,
+    top: -100,
   },
   option: {
     width: 80,
     height: 100,
     margin: 8,
-    // justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
     borderWidth: 2,
@@ -155,7 +156,6 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     borderColor: 'transparent',
-    // borderRadius : 20,
   },
   image: {
     width: 80,

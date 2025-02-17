@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -8,17 +8,17 @@ import {
   Dimensions,
 } from 'react-native';
 
-const Skintone = ({ navigation }) => {
+const Skintone = ({navigation}) => {
   const [selectedTone, setSelectedTone] = useState(null);
   const tones = [
-    { id: 'dark', label: 'Dark', color: '#8B5E3C' },
-    { id: 'medium', label: 'Medium', color: '#C99778' },
-    { id: 'light', label: 'Light', color: '#EBDCC3' },
-    { id: 'mediumLight', label: 'Medium Light', color: '#D8C1A3' },
-    { id: 'mediumDark', label: 'Medium Dark', color: '#B4835B' },
+    {id: 'dark', label: 'Dark', color: '#8B5E3C'},
+    {id: 'medium', label: 'Medium', color: '#C99778'},
+    {id: 'light', label: 'Light', color: '#EBDCC3'},
+    {id: 'mediumLight', label: 'Medium Light', color: '#D8C1A3'},
+    {id: 'mediumDark', label: 'Medium Dark', color: '#B4835B'},
   ];
 
-  const handleToneSelection = (id) => {
+  const handleToneSelection = id => {
     setSelectedTone(id);
   };
 
@@ -27,42 +27,43 @@ const Skintone = ({ navigation }) => {
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBarFill, { width: '48%' }]} />
+          <View style={[styles.progressBarFill, {width: '48%'}]} />
         </View>
         <Text style={styles.progressText}>48%</Text>
       </View>
 
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      {/* <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>◀</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Heading */}
       <View style={styles.headingContainer}>
         <Text style={styles.title}>What’s your skin tone?</Text>
         <Text style={styles.subtitle}>
-          Identifying your skin tone allows us to offer more effective recommendations.
+          Identifying your skin tone allows us to offer more effective
+          recommendations.
         </Text>
       </View>
 
       {/* Skin Tone Options */}
       <View style={styles.optionsContainer}>
-        {tones.map((tone) => (
+        {tones.map(tone => (
           <TouchableOpacity
             key={tone.id}
             style={[
               styles.option,
-              { backgroundColor: tone.color },
+              {backgroundColor: tone.color},
               selectedTone === tone.id && styles.selectedOption,
             ]}
-            onPress={() => handleToneSelection(tone.id)}
-          >
+            onPress={() => handleToneSelection(tone.id)}>
             <Text
               style={[
                 styles.optionLabel,
                 selectedTone === tone.id && styles.selectedOptionLabel,
-              ]}
-            >
+              ]}>
               {tone.label}
             </Text>
           </TouchableOpacity>
@@ -71,12 +72,15 @@ const Skintone = ({ navigation }) => {
 
       {/* Continue Button */}
       <TouchableOpacity
-        style={[styles.continueButton, !selectedTone && styles.disabledButton]}
+        style={[styles.continueButton]}
         onPress={() => {
-          if (selectedTone) navigation.navigate('Concerns', { skinTone: selectedTone });
-        }}
-        disabled={!selectedTone}
-      >
+          if (selectedTone) {
+            navigation.navigate('Concerns', {skinTone: `${selectedTone}`});
+            // Navigate to the next screen or perform an action here
+          } else {
+            alert('Please select a Skintone to continue.');
+          }
+        }}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -174,9 +178,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     fontWeight: '600',
-  },
-  disabledButton: {
-    backgroundColor: '#999',
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -7,25 +7,62 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
+  Image,
 } from 'react-native';
 
-const Concerns = ({ navigation }) => {
+const Concerns = ({navigation}) => {
   const [selectedConcerns, setSelectedConcerns] = useState([]);
   const concerns = [
-    { id: 'blackWhiteheads', label: 'Black/White heads' },
-    { id: 'darkUndereyes', label: 'Dark Undereyes' },
-    { id: 'hyperpigmentation', label: 'Hyper-Pigmentation' },
-    { id: 'roughness', label: 'Roughness' },
-    { id: 'sensitivity', label: 'Sensitivity' },
-    { id: 'wrinkles', label: 'Wrinkles' },
-    { id: 'dullness', label: 'Dullness' },
-    { id: 'largePores', label: 'Large Pores' },
-    { id: 'acneScars', label: 'Acne Scars' },
+    {
+      id: 'blackWhiteheads',
+      label: 'Black/White heads',
+      image: require('../../assets/images/black.png'),
+    },
+    {
+      id: 'darkUndereyes',
+      label: 'Dark Undereyes',
+      image: require('../../assets/images/eye.png'),
+    },
+    {
+      id: 'hyperpigmentation',
+      label: 'Hyper-Pigmentation',
+      image: require('../../assets/images/hyper.png'),
+    },
+    {
+      id: 'roughness',
+      label: 'Roughness',
+      image: require('../../assets/images/roughness.png'),
+    },
+    {
+      id: 'sensitivity',
+      label: 'Sensitivity',
+      image: require('../../assets/images/sensi.png'),
+    },
+    {
+      id: 'wrinkles',
+      label: 'Wrinkles',
+      image: require('../../assets/images/wrinkles.png'),
+    },
+    {
+      id: 'dullness',
+      label: 'Dullness',
+      image: require('../../assets/images/dullness.png'),
+    },
+    {
+      id: 'largePores',
+      label: 'Large Pores',
+      image: require('../../assets/images/largepores.png'),
+    },
+    {
+      id: 'acneScars',
+      label: 'Acne Scars',
+      image: require('../../assets/images/acne.png'),
+    },
   ];
 
-  const handleConcernSelection = (id) => {
+  const handleConcernSelection = id => {
     if (selectedConcerns.includes(id)) {
-      setSelectedConcerns(selectedConcerns.filter((concern) => concern !== id));
+      setSelectedConcerns(selectedConcerns.filter(concern => concern !== id));
     } else {
       setSelectedConcerns([...selectedConcerns, id]);
     }
@@ -36,61 +73,55 @@ const Concerns = ({ navigation }) => {
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBarFill, { width: '69%' }]} />
+          <View style={[styles.progressBarFill, {width: '69%'}]} />
         </View>
         <Text style={styles.progressText}>69%</Text>
       </View>
 
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      {/* <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>◀</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Heading */}
       <View style={styles.headingContainer}>
         <Text style={styles.title}>What are your concerns?</Text>
         <Text style={styles.subtitle}>
-          Identifying your concerns will help us to offer more effective recommendations.
+          Identifying your concerns will help us to offer more effective
+          recommendations.
         </Text>
       </View>
 
       {/* Concern Options */}
       <FlatList
         data={concerns}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.toString()}
         numColumns={3}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.optionsContainer}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.option,
-              selectedConcerns.includes(item.id) && styles.selectedOption,
-            ]}
-            onPress={() => handleConcernSelection(item.id)}
-          >
-            <Text
-              style={[
-                styles.optionLabel,
-                selectedConcerns.includes(item.id) && styles.selectedOptionLabel,
-              ]}
-            >
-              {item.label}
-            </Text>
-          </TouchableOpacity>
+        renderItem={({item}) => (
+          <View>
+            <TouchableOpacity
+              key={item.id}
+              style={[styles.option, selectedConcerns === item]}
+              onPress={() => handleConcernSelection(item)}>
+              <Image source={item.image} style={styles.image} />
+            </TouchableOpacity>
+            <Text style={styles.optionLabel}>{item.label}</Text>\
+          </View>
         )}
       />
 
       {/* Continue Button */}
       <TouchableOpacity
-        style={[styles.continueButton, selectedConcerns.length === 0 && styles.disabledButton]}
+        style={styles.continueButton}
         onPress={() => {
           if (selectedConcerns.length > 0) {
-            navigation.navigate('Experience', { concerns: selectedConcerns });
+            navigation.navigate('Experience', {concerns: selectedConcerns});
+          } else {
+            alert('Please select a Concerns to continue.');
           }
-        }}
-        disabled={selectedConcerns.length === 0}
-      >
+        }}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -166,12 +197,20 @@ const styles = StyleSheet.create({
     borderRadius: Dimensions.get('window').width / 6,
     backgroundColor: '#E0E0E0',
   },
+  image: {
+    width: Dimensions.get('window').width / 3 - 24,
+    height: Dimensions.get('window').width / 3 - 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 8,
+    borderRadius: Dimensions.get('window').width / 6,
+  },
   selectedOption: {
     borderColor: '#000',
     borderWidth: 2,
   },
   optionLabel: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#333',
     textAlign: 'center',
     paddingHorizontal: 4,

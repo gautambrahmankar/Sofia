@@ -1,7 +1,17 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 const Goals = ({navigation}) => {
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const options = [
+    {id: '1', label: 'Fix the concerns of my skin'},
+    {id: '2', label: 'Discover skincare products'},
+    {id: '3', label: 'Educate myself about skincare'},
+    {id: '4', label: 'Learn more about my skin'},
+    {id: '5', label: 'Apply home treatments'},
+  ];
+
   return (
     <View style={styles.container}>
       <View style={styles.progressContainer}>
@@ -16,27 +26,34 @@ const Goals = ({navigation}) => {
       </Text>
 
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionText}>Fix the concerns of my skin</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionText}>Discover skincare products</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionText}>Educate myself about skincare</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionText}>Learn more about my skin</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionText}>Apply home treatments</Text>
-        </TouchableOpacity>
+        {options.map(option => (
+          <TouchableOpacity
+            key={option.id}
+            style={[
+              styles.option,
+              selectedOption === option.id && styles.selectedOption,
+            ]}
+            onPress={() => setSelectedOption(option.id)}>
+            <Text
+              style={[
+                styles.optionLabel,
+                selectedOption === option.id && styles.selectedOptionLabel,
+              ]}>
+              {option.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       <TouchableOpacity
         style={styles.continueButton}
-        onPress={() => navigation.navigate('HomeTabs')} // Replace 'NextScreen' with your next screen name
-      >
+        onPress={() => {
+          if (selectedOption) {
+            navigation.navigate('HomeTabs', {experience: selectedOption});
+          } else {
+            alert('Please select your goals to continue.');
+          }
+        }}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </View>
@@ -69,6 +86,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
+  option: {
+    width: '100%',
+    padding: 16,
+    marginVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#E0E0E0',
+  },
+  selectedOption: {
+    backgroundColor: '#000',
+  },
+  optionLabel: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  selectedOptionLabel: {
+    color: '#FFF',
+    fontWeight: '600',
+  },
   subText: {
     fontSize: 14,
     color: 'gray',
@@ -88,15 +124,16 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   continueButton: {
-    backgroundColor: 'black',
-    padding: 15,
+    backgroundColor: '#000',
+    padding: 16,
     borderRadius: 8,
-    alignItems: 'center',
+    marginTop: 'auto',
   },
   continueButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

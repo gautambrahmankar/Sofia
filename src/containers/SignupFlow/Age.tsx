@@ -87,7 +87,7 @@ const Age = ({navigation}) => {
         onPress={() => {
           if (selectedAge) {
             console.log(`Selected Age: ${selectedAge}`);
-            navigation.navigate('Skintype', { Age : `${selectedAge}` });
+            navigation.navigate('Skintype', {Age: `${selectedAge}`});
           } else {
             alert('Please select your age to continue.');
           }
@@ -127,8 +127,10 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   titleContainer: {
+    flex: 1,
     alignItems: 'center',
-    marginTop: 40,
+    justifyContent: 'center',
+    marginBottom: -80,
   },
   title: {
     fontSize: 24,
@@ -140,20 +142,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     textAlign: 'center',
-    marginTop: 10,
   },
   ageList: {
-    alignItems: 'center',
-    paddingVertical: 20,
+    //alignItems: 'center',
+    //paddingVertical: 20,
+    // height:150,
+    // backgroundColor:'red'
   },
   ageOption: {
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 5,
     borderRadius: 10,
-    backgroundColor: '#f5f5f5',
-    width: '80%',
+    width: '100%',
   },
   selectedOption: {
     backgroundColor: '#d3d3d3',
@@ -161,7 +162,6 @@ const styles = StyleSheet.create({
   ageText: {
     fontSize: 16,
     color: 'black',
-    paddingHorizontal : 10,
   },
   selectedText: {
     color: 'black',

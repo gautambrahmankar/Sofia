@@ -7,8 +7,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {navigate} from '../../navigation/navigationUtils';
-// import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const Gender = ({navigation}) => {
   const [selectedGender, setSelectedGender] = useState(null);
@@ -113,6 +111,8 @@ const styles = StyleSheet.create({
   titleContainer: {
     alignItems: 'center',
     marginBottom: 40,
+    flex: 1,
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   genderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 40,
+    bottom: 150,
   },
   genderOption: {
     width: '30%',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 20,
+    // marginBottom: 4,
   },
   continueText: {
     color: 'white',
