@@ -126,6 +126,16 @@ function LoginScreen({navigation}: {navigation: any}) {
           </Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.footer}>
+        <Text style={styles.createAccountText}>
+          Or{' '}
+          <Text
+            onPress={() => navigation.navigate('SignupScreen')}
+            style={styles.linkText}>
+            Create new account
+          </Text>
+        </Text>
+      </View>
     </View>
   );
 }
@@ -153,9 +163,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   image: {
-    width: width * 0.8,
-    height: height * 0.2,
-    borderRadius: 18,
+    // width: width * 0.8,
+    // height: height * 0.2,
+    // borderRadius: 18,
     marginVertical: 20,
     resizeMode: 'cover',
   },
@@ -210,9 +220,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#7a7a7a',
   },
+  footer: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    bottom: 10,
+    position: 'absolute',
+  },
   linkText: {
-    color: '#007AFF',
+    color: '#000000',
     textDecorationLine: 'underline',
+    fontWeight: 'bold',
   },
   icon: {
     marginRight: 10,

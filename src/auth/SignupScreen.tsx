@@ -79,11 +79,16 @@ function SignupScreen({navigation}: {navigation: any}) {
         </TouchableOpacity>
 
         {/* Log In link */}
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <View style={styles.footer}>
           <Text style={styles.createAccountText}>
-            Already have an account? <Text style={styles.linkText}>Log in</Text>
+            Already have an account?{' '}
+            <Text
+              onPress={() => navigation.navigate('Login')}
+              style={styles.linkText}>
+              Log in
+            </Text>
           </Text>
-        </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -170,9 +175,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#7a7a7a',
   },
+  footer: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    bottom: 10,
+    position: 'absolute',
+  },
   linkText: {
-    color: '#007AFF',
+    color: '#000000',
     textDecorationLine: 'underline',
+    fontWeight: 'bold',
   },
   icon: {
     marginRight: 10,
