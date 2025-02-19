@@ -88,6 +88,7 @@ const HomeScreen = () => {
       </View>
 
       {/* Bottom Navigation */}
+      <View style={{height: 400, width: 10}}></View>
     </ScrollView>
   );
 };

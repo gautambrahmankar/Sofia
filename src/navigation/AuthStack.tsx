@@ -21,6 +21,8 @@ import Skintone from '../containers/SignupFlow/Skintone';
 import Skintype from '../containers/SignupFlow/Skintype';
 import auth from '@react-native-firebase/auth';
 import {ActivityIndicator, View} from 'react-native';
+import ExploreScreen from '../containers/ExploreScreen';
+import AcneguideScreen from '../containers/SignupFlow/AcneguideScreen';
 
 const Stack = createStackNavigator();
 
@@ -116,6 +118,16 @@ const AuthStack = () => {
       <Stack.Screen
         name="Experience"
         component={Experience}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ExploreScreen"
+        component={ExploreScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AcneguideScreen"
+        component={AcneguideScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen
