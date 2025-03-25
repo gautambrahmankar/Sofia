@@ -1,4 +1,17 @@
 {
   "migIndex": 1,
-  "data": []
+  "data": [
+    {
+      "path": "src/assets/fonts/Walkway Bold.ttf",
+      "sha1": "0a36ba1478275ca329bbf1ef7d952b852a58900d"
+    },
+    {
+      "path": "src/assets/fonts/Walkway Expand UltraBold.ttf",
+      "sha1": "fac6dce50f1d73c1d6c170b92e5e439b5872440e"
+    },
+    {
+      "path": "src/assets/fonts/customFont.ttf",
+      "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    }
+  ]
 }

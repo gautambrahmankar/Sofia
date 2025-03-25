@@ -1,12 +1,23 @@
 # Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+ def node_require(script)
+   # Resolve script with node to allow for hoisting
+   require Pod::Executable.execute_command('node', ['-p',
+     "require.resolve(
+       '#{script}',
+       {paths: [process.argv[1]]},
+     )", __dir__]).strip
+ end
+
+ node_require('react-native/scripts/react_native_pods.rb')
+ node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+
+setup_permissions([
+  'Camera',
+  'Notifications',
+])
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -18,17 +29,22 @@ target 'Sophie' do
   config = use_native_modules!
   use_frameworks! :linkage => :static
   $RNFirebaseAsStaticFramework = true
+  # $FirebaseSDKVersion = '10.15.0'
 
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
   pod 'Firebase', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
-  #pod 'FirebaseCoreInternals', :modular_headers => true
+  # pod 'FirebaseCoreInternals', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
+  
+  
+
+  # pod 'GoogleMLKit/FaceDetection', '5.0.0'
+
 
   target 'SophieTests' do
     inherit! :complete
@@ -36,6 +52,17 @@ target 'Sophie' do
   end
 
   post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      if target.name == 'BoringSSL-GRPC'
+        target.source_build_phase.files.each do |file|
+          if file.settings && file.settings['COMPILER_FLAGS']
+            flags = file.settings['COMPILER_FLAGS'].split
+            flags.reject! { |flag| flag == '-GCC_WARN_INHIBIT_ALL_WARNINGS' }
+            file.settings['COMPILER_FLAGS'] = flags.join(' ')
+          end
+        end
+      end
+    end
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,

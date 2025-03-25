@@ -1,15 +1,32 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {saveOnboardingData} from '../../utils/common';
+import {storage} from '../../utils/storage';
 
 const Gender = ({navigation}) => {
   const [selectedGender, setSelectedGender] = useState(null);
+
+  useEffect(() => {
+    // Retrieve gender from MMKV if available
+    const storedData = storage.getString('onboarding_data');
+    console.log('kk', storedData);
+    console.log('All MMKV Keys:', storage.getAllKeys());
+
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      if (parsedData?.gender) {
+        setSelectedGender(parsedData.gender);
+      }
+    }
+  }, []);
 
   const handleGenderSelect = gender => {
     setSelectedGender(gender);
@@ -38,7 +55,7 @@ const Gender = ({navigation}) => {
         {[
           {label: 'Female', icon: 'female-outline'},
           {label: 'Male', icon: 'male-outline'},
-          {label: 'Non-binary', icon: 'ellipse-outline'},
+          // {label: 'Non-binary', icon: 'ellipse-outline'},
         ].map(item => (
           <TouchableOpacity
             key={item.label}
@@ -69,10 +86,12 @@ const Gender = ({navigation}) => {
         onPress={() => {
           if (selectedGender) {
             console.log(`Selected Gender: ${selectedGender}`);
-            navigation.navigate('Age', {Gender: `${selectedGender}`});
-            // Navigate to the next screen or perform an action here
+
+            saveOnboardingData({gender: selectedGender});
+
+            navigation.navigate('Age', {Gender: selectedGender});
           } else {
-            alert('Please select a gender to continue.');
+            Alert.alert('Please select a gender to continue.');
           }
         }}>
         <Text style={styles.continueText}>Continue</Text>
@@ -128,7 +147,7 @@ const styles = StyleSheet.create({
   },
   genderContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     bottom: 150,
   },
   genderOption: {

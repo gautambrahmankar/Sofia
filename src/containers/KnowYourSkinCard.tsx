@@ -1,15 +1,19 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { navigate } from '../navigation/navigationUtils';
 
 export default function KnowYourSkinCard() {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Know your skin</Text>
+      <Text style={styles.heading}>{t("know_your_skin_title")}</Text>
       <View style={styles.card}>
         <View style={styles.leftSection}>
-          <Text style={styles.title}>Let’s personalize your profile</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Start now</Text>
+          <Text style={styles.title}>{t("personalize_profile")}</Text>
+          <TouchableOpacity style={styles.button} onPress={() => navigate("ScanFace",{})}>
+            <Text style={styles.buttonText}>{t("start_now")}</Text>
           </TouchableOpacity>
         </View>
         <Image

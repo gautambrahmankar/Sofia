@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>470418142403-h6pkj6gcpocqrn6op5hcr3m2u9nqves9.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.470418142403-h6pkj6gcpocqrn6op5hcr3m2u9nqves9</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>470418142403-gcb9chhbioc2hb4r841cni6qbsho3ov8.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA0cVOU7TZuVr19Aapa7TH0kUOirOk_yK0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>470418142403</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.sophielondon.app</string>
+	<key>PROJECT_ID</key>
+	<string>sohpie-f378f</string>
+	<key>STORAGE_BUCKET</key>
+	<string>sohpie-f378f.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:470418142403:ios:ed0e4d452600c0ac011e76</string>
+</dict>
+</plist>

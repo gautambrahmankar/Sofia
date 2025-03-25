@@ -1,36 +1,52 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import {navigate} from '../navigation/navigationUtils';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 const CARD_WIDTH = width * 0.8;
 
-const products = [
-  { type: 'Dry', image: require('../assets/images/Dry.png') },
-  { type: 'Oily', image: require('../assets/images/Oily.png') },
-  { type: 'Normal', image: require('../assets/images/Normal.png') },
-  { type: 'Acne', image: require('../assets/images/acne1.png') },
-  { type: 'Combination', image: require('../assets/images/Combination.png') },
-];
-
-
 export default function ProductList() {
+  const {t} = useTranslation();
+
+  const products = [
+    {type: 'Dry', image: require('../assets/images/Dry.png')},
+    {type: 'Oily', image: require('../assets/images/Oily.png')},
+    {type: 'Normal', image: require('../assets/images/Normal.png')},
+    {type: 'Acne', image: require('../assets/images/acne1.png')},
+    {type: 'Combination', image: require('../assets/images/Combination.png')},
+  ];
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Range of products</Text>
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false} 
-        contentContainerStyle={styles.scrollView}
-      >
+      <Text style={styles.title}>{t('range_of_products')}</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollView}>
         {products.map((product, index) => (
           <View key={index} style={styles.card}>
             <View style={styles.cardContent}>
-              <Text style={styles.description}>Products for {product.type.toLowerCase()} skin type</Text>
-              <Image source={product.image} style={styles.image} />
+              <Text style={styles.description}>
+                {t('product_description', {
+                  type: t(`skin_type_${product.type.toLowerCase()}`),
+                })}
+              </Text>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigate('Products', {})}>
+                <Text style={styles.buttonText}>{t('product_explore')}</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Explore</Text>
-            </TouchableOpacity>
+            <Image source={product.image} style={styles.image} />
           </View>
         ))}
       </ScrollView>
@@ -53,9 +69,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: CARD_WIDTH,
-    height: 150,
     backgroundColor: '#F4F0EF',
-    borderColor: '#F4F0EF',
     padding: 20,
     borderRadius: 12,
     shadowColor: '#000',
@@ -68,13 +82,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cardContent: {
-    // flex: 1,
+    flex: 1, // Ensures text wraps properly
   },
   description: {
     fontSize: 16,
     fontWeight: '500',
-    marginBottom: 8,
     color: '#333',
+    flexWrap: 'wrap',
   },
   image: {
     width: 80,
@@ -84,14 +98,15 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: 'black',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderRadius: 20,
-    marginTop: 12,
+    marginTop: 10,
+    alignSelf: 'flex-start',
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });

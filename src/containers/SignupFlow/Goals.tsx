@@ -1,8 +1,36 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import {
+  getOnboardingData,
+  saveOnboardingData,
+  submitOnboardingData,
+} from '../../utils/common';
+import {storage} from '../../utils/storage';
 
 const Goals = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState(null);
+
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    // Retrieve user data from MMKV
+    const storedUser = storage.getString('user_data');
+    if (storedUser) {
+      setUserData(JSON.parse(storedUser));
+    }
+
+    const storedData = storage.getString('onboarding_data');
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        if (parsedData?.skin_factors?.goals) {
+          setSelectedOption(parsedData.skin_factors.goals);
+        }
+      } catch (error) {
+        console.error('Error parsing stored goal:', error);
+      }
+    }
+  }, []);
 
   const options = [
     {id: '1', label: 'Fix the concerns of my skin'},
@@ -31,13 +59,15 @@ const Goals = ({navigation}) => {
             key={option.id}
             style={[
               styles.option,
-              selectedOption === option.id && styles.selectedOption,
+              selectedOption?.id === option.id && styles.selectedOption,
             ]}
-            onPress={() => setSelectedOption(option.id)}>
+            onPress={() =>
+              setSelectedOption({id: option?.id, label: option?.label})
+            }>
             <Text
               style={[
                 styles.optionLabel,
-                selectedOption === option.id && styles.selectedOptionLabel,
+                selectedOption?.id === option.id && styles.selectedOptionLabel,
               ]}>
               {option.label}
             </Text>
@@ -49,9 +79,22 @@ const Goals = ({navigation}) => {
         style={styles.continueButton}
         onPress={() => {
           if (selectedOption) {
+            console.log(`Selected Goals: ${selectedOption}`);
+
+            // Save goals in MMKV
+            saveOnboardingData({
+              skin_factors: {
+                ...getOnboardingData()?.skin_factors,
+                goals: selectedOption,
+              },
+            });
+
+            submitOnboardingData(userData?.uid);
+
+            // Navigate to the final screen
             navigation.navigate('HomeTabs', {experience: selectedOption});
           } else {
-            alert('Please select your goals to continue.');
+            Alert.alert('Please select your goals to continue.');
           }
         }}>
         <Text style={styles.continueButtonText}>Continue</Text>

@@ -12,6 +12,8 @@ export type RootStackParamList = {
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 export function navigate(name: keyof RootStackParamList, params: any) {
+  console.log('name', name);
+
   if (navigationRef.isReady()) {
     navigationRef.navigate(name, params);
   }

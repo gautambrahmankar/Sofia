@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,31 +6,237 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  FlatList,
 } from 'react-native';
 import ProductCard from './ProductCard';
 import DermatologistsList from './DermatologistList';
 import KnowYourSkinCard from './KnowYourSkinCard';
+import LocalNotification from '../helpers/LocalNotification';
+import {navigate} from '../navigation/navigationUtils';
+import {useTranslation} from 'react-i18next';
+import i18n, {changeLanguage} from '../config/i18';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import notifee from '@notifee/react-native';
+import {storage} from '../utils/storage';
+
+interface NotificationData {
+  id: string;
+  title: string;
+  body: string;
+  timestamp: string;
+}
 
 const HomeScreen = () => {
+  const {t} = useTranslation();
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [notificationModalVisible, setNotificationModalVisible] =
+    useState(false);
+
+  const [notifications, setNotifications] = useState<NotificationData[]>([]);
+
+  useEffect(() => {
+    setCurrentLanguage(i18n.language);
+  }, []);
+
+  const selectLanguage = language => {
+    changeLanguage(language);
+    setCurrentLanguage(language);
+    setModalVisible(false);
+  };
+
+  const handleScheduleReminder = async () => {
+    try {
+      console.log('Scheduling daily weather notifications...');
+      await LocalNotification.scheduleDailyWeatherNotifications();
+      console.log('Successfully scheduled notifications.');
+    } catch (error) {
+      console.error('Error scheduling notification:', error);
+    }
+  };
+
+  const fetchDisplayedNotifications = async () => {
+    try {
+      const displayedNotifications = await notifee.getDisplayedNotifications();
+
+      const newNotifications = displayedNotifications.map(notif => ({
+        id: notif.notification.id,
+        title: notif.notification.title || 'No Title',
+        body: notif.notification.body || 'No Message',
+        timestamp: new Date().toISOString(),
+      }));
+
+      saveNotifications(newNotifications);
+      loadNotifications();
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  console.log('notofcs', notifications);
+
+  // Save notifications in MMKV
+  const saveNotifications = newNotifications => {
+    const existingNotifications = storage.getString('notifications');
+    const parsedNotifications = existingNotifications
+      ? JSON.parse(existingNotifications)
+      : [];
+
+    // Merge new and existing notifications
+    const updatedNotifications = [...newNotifications, ...parsedNotifications];
+
+    storage.set('notifications', JSON.stringify(updatedNotifications));
+  };
+
+  // Load notifications from MMKV
+  const loadNotifications = () => {
+    const storedNotifications = storage.getString('notifications');
+    if (storedNotifications) {
+      setNotifications(JSON.parse(storedNotifications));
+    }
+  };
+
+  // Load stored notifications on app startup
+  useEffect(() => {
+    loadNotifications();
+  }, []);
+
+  const reviews = [
+    {
+      name: 'Arrya Sharma',
+      rating: 5,
+      date: 'a month ago',
+      review:
+        'Sophie Cosmetix has some of the best beauty products I’ve tried! The quality is amazing, and everything feels so luxurious on the skin. Their formulas are gentle yet effective, and I’ve noticed a real difference since using them. Shipping was fast, and the packaging is beautiful. Definitely a brand I’ll keep coming back to!',
+      likes: 1,
+      response: 'We really appreciate your comment. Thank you.',
+      url: require('../assets/images/Saily.png'),
+    },
+    {
+      name: 'Selçuk Keleş',
+      rating: 5,
+      date: 'a month ago',
+      review:
+        'I have the perfume from the premium collection and I’m really happy, the scent stays on you all day long!',
+      likes: 0,
+      response: null,
+      url: require('../assets/images/Leslie.png'),
+    },
+    {
+      name: 'Sebastian Siles Roman',
+      rating: 5,
+      date: 'a month ago',
+      review:
+        'Una variedad perfecta de productos para regalar, son de muy buena calidad 👌🏽',
+      likes: 0,
+      response: null,
+      url: require('../assets/images/Saily.png'),
+    },
+  ];
+
   return (
     <ScrollView style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
         <Text style={styles.title}>SOPHIE</Text>
-        <TouchableOpacity style={styles.bellIcon}>
-          {/* Placeholder for a bell icon */}
-          <Text>🔔</Text>
-        </TouchableOpacity>
+        <View style={styles.iconContainer}>
+          <TouchableOpacity
+            style={styles.bellIcon}
+            onPress={async () => {
+              await fetchDisplayedNotifications();
+              setNotificationModalVisible(true);
+            }}
+            // onPress={handleScheduleReminder}
+          >
+            <Text>🔔</Text>
+          </TouchableOpacity>
+          {/* Language Switch Icon */}
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={styles.languageSwitcher}>
+            <FontAwesome name="language" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      {/* Modal for Notifications */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={notificationModalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Notifications</Text>
+
+            {/* List of Notifications */}
+            <FlatList
+              data={notifications}
+              ListEmptyComponent={() => (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No notifications yet 📭</Text>
+                </View>
+              )}
+              keyExtractor={item => item.id}
+              renderItem={({item}) => (
+                <View style={styles.notificationItem}>
+                  <Text style={styles.notificationText}>{item.body}</Text>
+                </View>
+              )}
+            />
+
+            {/* Close Button */}
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setNotificationModalVisible(false)}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Language Selection Modal */}
+      <Modal
+        visible={isModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{t('select_language')}</Text>
+
+            <TouchableOpacity
+              onPress={() => selectLanguage('en')}
+              style={styles.languageOption}>
+              <Text style={styles.languageText}>{t('english')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => selectLanguage('tr')}
+              style={styles.languageOption}>
+              <Text style={styles.languageText}>{t('turkish')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>{t('cancel')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Face Scan Section */}
       <View style={styles.scanSection}>
         <Image
           style={styles.faceImage}
-          source={require('../assets/images/Curly.png')} // Replace with the actual image URL
+          source={require('../assets/images/face_scan.jpg')}
         />
-        <TouchableOpacity style={styles.scanButton}>
-          <Text style={styles.scanButtonText}>Tap to scan</Text>
+        <TouchableOpacity
+          style={styles.scanButton}
+          onPress={() => navigate('ScanFace', {})}>
+          <Text style={styles.scanButtonText}>{t('tap_to_scan')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -38,44 +244,35 @@ const HomeScreen = () => {
       <ProductCard />
 
       {/* Consult Dermatologist Section */}
-      <DermatologistsList/>
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Consult Dermatologist</Text>
-        <View style={styles.dermatologistCard}>
-          <Image
-            style={styles.dermatologistImage}
-            source={require('../assets/images/Jane.png')} // Replace with actual image URL
-          />
-          <View style={styles.dermatologistInfo}>
-            <Text style={styles.dermatologistName}>Dr. Jane Cooper</Text>
-            <Text>Senior Dermatologist</Text>
-            <Text>10+ years Experience</Text>
-            <Text>⭐ 5.0</Text>
-            <TouchableOpacity style={styles.knowMoreButton}>
-              <Text style={styles.knowMoreText}>Know more</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View> */}
+      {/* <DermatologistsList /> */}
 
       {/* Know Your Skin Section */}
-      <KnowYourSkinCard/>
-
+      <KnowYourSkinCard />
 
       {/* Our Results Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Our results</Text>
-        <View style={styles.resultsRow}>
-          <View style={styles.resultCard}>
-            <Image
-              style={styles.resultImage}
-              source={require('../assets/images/Leslie.png')}
-            />
-            <Text>Leslie Alexander</Text>
-            <Text>⭐ 5.0</Text>
-            <Text>Lorem ipsum dolor sit amet consectetur.</Text>
-          </View>
-          <View style={styles.resultCard}>
+        <Text style={styles.sectionTitle}>{t('our_results')}</Text>
+        {/* <View style={styles.resultsRow}> */}
+        <FlatList
+          data={reviews}
+          keyExtractor={(item, index) => index.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 10,
+            // backgroundColor: 'green',
+            // width: '90%',
+          }}
+          renderItem={({item}) => (
+            <View style={styles.resultCard}>
+              <Image style={styles.resultImage} source={item.url} />
+              <Text>{item.name}</Text>
+              <Text>⭐ {item.rating}</Text>
+              <Text>{item.review}</Text>
+            </View>
+          )}
+        />
+        {/* <View style={styles.resultCard}>
             <Image
               style={styles.resultImage}
               source={require('../assets/images/Saily.png')}
@@ -83,12 +280,12 @@ const HomeScreen = () => {
             <Text>Saily Jane</Text>
             <Text>⭐ 5.0</Text>
             <Text>Lorem ipsum dolor sit amet consectetur.</Text>
-          </View>
-        </View>
+          </View> */}
       </View>
+      {/* </View> */}
 
       {/* Bottom Navigation */}
-      <View style={{height: 400, width: 10}}></View>
+      <View style={{height: 250, width: 10}}></View>
     </ScrollView>
   );
 };
@@ -106,89 +303,95 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
   },
-  title: {fontSize: 20, fontWeight: 'bold'},
+  title: {
+    fontSize: 20,
+    fontFamily: 'Walkway Expand UltraBold',
+    color: '#E3D09D',
+  },
+  iconContainer: {flexDirection: 'row', alignItems: 'center'},
   bellIcon: {padding: 8},
+  languageSwitcher: {marginLeft: 15},
+
   scanSection: {
     alignItems: 'center',
-    height: '25%',
-    marginBottom: '15%',
-    marginTop: '10%',
+    height: '20%',
+    marginBottom: '5%',
+    marginTop: '5%',
   },
   faceImage: {width: '100%', height: '100%', borderRadius: 10, marginBottom: 8},
-  scanButton: {backgroundColor: '#ddd', padding: 10, borderRadius: 5},
+  scanButton: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 25,
+    paddingVertical: 10,
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 20,
+  },
   scanButtonText: {fontWeight: 'bold'},
+
   section: {marginVertical: 16, marginTop: 20},
   sectionTitle: {fontSize: 18, fontWeight: 'bold', marginBottom: 8},
-  productRow: {flexDirection: 'row', justifyContent: 'space-between'},
-  productCard: {
-    alignItems: 'center',
-    padding: 16,
-    borderWidth: 1,
-    borderRadius: 8,
-    width: '48%',
-    backgroundColor: '#F4F0EF',
-    borderColor: '#F4F0EF',
-  },
-  productType: {fontSize: 16, marginBottom: 8},
-  exploreButton: {backgroundColor: '#000000', padding: 8, borderRadius: 10},
-  exploreText: {fontWeight: 'bold', color: 'white'},
-  dermatologistCard: {
-    flexDirection: 'row',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 16,
-    borderColor: '#F4F0EF',
-    backgroundColor: '#F4F0EF',
-    justifyContent:'space-around',
-  },
-  dermatologistImage: {
-    width: '25%',
-    height: '90%',
-    borderRadius: 12,
-    marginRight: 16,
-  },
-  dermatologistInfo: {flex: 1},
-  dermatologistName: {fontSize: 16, fontWeight: 'bold'},
-  knowMoreButton: {
-    width: '40%',
-    marginTop: 8,
-    backgroundColor: '#000000',
-    padding: '3%',
-    borderRadius: 12,
-    justifyContent:'center',
-    // alignSelf: 'center',
-  },
-  knowMoreText: {fontWeight: 'bold', color:'white', textAlign:'center'},
-  profileCard: {
-    padding: 16,
-    borderWidth: 1,
-    borderRadius: 8,
-    alignItems: 'center',
-    borderColor: '#F4F0EF',
-    backgroundColor: '#F4F0EF',
-  },
-  startButton: {
-    marginTop: 8,
-    backgroundColor: '#ddd',
-    padding: 10,
-    borderRadius: 5,
-  },
-  startButtonText: {fontWeight: 'bold'},
+
   resultsRow: {flexDirection: 'row', justifyContent: 'space-between'},
   resultCard: {
+    backgroundColor: '#fff',
+    padding: 12,
+    margin: 10,
+    borderRadius: 10,
     alignItems: 'center',
-    padding: 16,
-    borderWidth: 1,
-    borderRadius: 8,
-    width: '48%',
-    borderColor: '#F4F0EF',
+    width: 250,
+    minHeight: 140,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  resultImage: {width: 50, height: 50, borderRadius: 25, marginBottom: 8},
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 16,
-    borderTopWidth: 1,
+  resultImage: {width: 45, height: 45, borderRadius: 25, marginBottom: 8},
+
+  /* Modal Styles */
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+    maxHeight: 500,
+  },
+  modalTitle: {fontSize: 18, fontWeight: 'bold', marginBottom: 10},
+  languageOption: {padding: 10, width: '100%', alignItems: 'center'},
+  languageText: {fontSize: 16},
+  closeButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#ddd',
+    borderRadius: 5,
+    width: '100%',
+    alignItems: 'center',
+  },
+  closeButtonText: {fontWeight: 'bold'},
+
+  notificationItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  notificationText: {
+    fontSize: 16,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: 'gray',
   },
 });
 

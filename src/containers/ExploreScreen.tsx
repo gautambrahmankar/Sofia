@@ -83,105 +83,12 @@ const ingredients = [
 
 const ExploreScreen = ({navigation}) => {
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.glowSkin}>Glow Skin</Text>
-        <TouchableOpacity style={styles.bellIcon}>
-          <Icon name="notifications" size={24} color="black" />
-        </TouchableOpacity>
+   
+      <View style={{flex:1,alignItems: "center",justifyContent: "center"}}>
+      <Text style={styles.glowSkin}>Coming Soon</Text>
       </View>
-
-      <Text style={styles.title}>Academy</Text>
-      <Text style={styles.subtitle}>
-        Expand your skincare knowledge to achieve perfect skin
-      </Text>
-
-      {/* Search Bar */}
-      <View style={styles.searchBar}>
-        <Icon name="search" size={20} color="gray" style={styles.searchIcon} />
-        <TextInput
-          placeholder="Search the library"
-          style={styles.searchInput}
-        />
-      </View>
-
-      {/* Daily Recommendations */}
-      <Text style={styles.sectionTitle}>Thursday, Jul 11</Text>
-      <Text style={styles.sectionSubtitle}>
-        Here are your daily recommendations
-      </Text>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={recommendations}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <TouchableOpacity onPress={()=>  navigation.navigate('AcneguideScreen')} style={styles.card}>
-            <Image source={item.image} style={styles.cardImage} />
-            <Text numberOfLines={2} style={styles.cardTitle}>
-              {item.title}
-            </Text>
-            <Text style={styles.cardCategory}>{item.category}</Text>
-          </TouchableOpacity>
-        )}
-      />
-
-      {/* Ingredients Section */}
-      <Text style={styles.sectionTitle}>Ingredients</Text>
-      <Text style={styles.sectionSubtitle}>
-        Gain expertise in active ingredients
-      </Text>
-      <View style={styles.ingredientsContainer}>
-        {ingredients.map((ingredient, index) => (
-          <View key={index} style={styles.ingredientBadge}>
-            <Image source={ingredient.image} style={styles.ingredientImage} />
-            <Text style={styles.ingredientText}>{ingredient.name}</Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Skincare 101  */}
-      <Text style={styles.sectionTitle}>Skincare 101</Text>
-      <Text style={styles.sectionSubtitle}>
-        Basic knowledge to embark on your skincare journey
-      </Text>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={Skincare}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <TouchableOpacity style={styles.card}>
-            <Image source={item.image} style={styles.cardImage} />
-            <Text numberOfLines={2} style={styles.cardTitle}>
-              {item.title}
-            </Text>
-            <Text style={styles.cardCategory}>{item.category}</Text>
-          </TouchableOpacity>
-        )}
-      />
-      {/* New and Noteworthy */}
-      <Text style={styles.sectionTitle}>New and Noteworthy</Text>
-      <Text style={styles.sectionSubtitle}>
-        Fresh content we’ve just prepared for you
-      </Text>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={recommendations}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <TouchableOpacity style={styles.card}>
-            <Image source={item.image} style={styles.cardImage} />
-            <Text numberOfLines={2} style={styles.cardTitle}>
-              {item.title}
-            </Text>
-            <Text style={styles.cardCategory}>{item.category}</Text>
-          </TouchableOpacity>
-        )}
-      />
-      <View style={{height: 100, width: 10}}></View>
-    </ScrollView>
+          
+ 
   );
 };
 
@@ -193,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
   },
-  glowSkin: {fontSize: 18, fontWeight: 'bold'},
+  glowSkin: {fontSize: 32, fontWeight: 'semibold',alignSelf: 'center'},
   bellIcon: {padding: 8},
   title: {fontSize: 24, fontWeight: 'bold', marginTop: 5},
   subtitle: {color: 'gray', marginBottom: 10},

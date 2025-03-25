@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProfileScreen from '../containers/ProfileScreen';
 import ExploreScreen from '../containers/ExploreScreen';
 import ProductScreen from '../containers/ProductScreen';
+import {navigate} from './navigationUtils';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -57,7 +58,9 @@ const HomeTabs = () => {
         name="Scan"
         component={ExploreScreen} // Replace this with your scan feature
         options={{
-          tabBarButton: props => <ScanButton {...props} />,
+          tabBarButton: props => (
+            <ScanButton {...props} onPress={() => navigate('ScanFace', {})} />
+          ),
         }}
       />
       <Tab.Screen

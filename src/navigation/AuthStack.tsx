@@ -23,6 +23,10 @@ import auth from '@react-native-firebase/auth';
 import {ActivityIndicator, View} from 'react-native';
 import ExploreScreen from '../containers/ExploreScreen';
 import AcneguideScreen from '../containers/SignupFlow/AcneguideScreen';
+import ScanFaceScreen from '../containers/ScanFaceScreen';
+import SelfieCameraScreen from '../containers/CameraCapture';
+import AIAnalysisScreen from '../containers/AiAnalysisScreen';
+import SplashScreenVideo from '../containers/SignupFlow/SplashScreen';
 
 const Stack = createStackNavigator();
 
@@ -48,8 +52,13 @@ const AuthStack = () => {
   }
   return (
     <Stack.Navigator
-      initialRouteName={user ? 'MainStack' : 'Login'} // 👈 Dynamically set the initial route
+      initialRouteName={'SplashScreen'}
       screenOptions={{headerShown: false}}>
+      <Stack.Screen
+        name="SplashScreen"
+        component={SplashScreenVideo}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="LoginScreen"
         component={LoginScreen}
@@ -148,6 +157,22 @@ const AuthStack = () => {
       <Stack.Screen
         name="Skintone"
         component={Skintone}
+        options={{headerShown: false}}
+      />
+
+      <Stack.Screen
+        name="ScanFace"
+        component={ScanFaceScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="FaceCapture"
+        component={SelfieCameraScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SkinAnalysis"
+        component={AIAnalysisScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

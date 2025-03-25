@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -6,19 +6,30 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
-import {useWindowDimensions} from 'react-native';
+import {storage} from '../../utils/storage';
+import {getOnboardingData, saveOnboardingData} from '../../utils/common';
 
 const Skintype = ({navigation}) => {
   const [selectedSkinType, setSelectedSkinType] = useState(null);
+
   const skinTypes = [
-    {id: 'dry', label: '', image: require('../../assets/images/Dry.png')},
-    {id: 'oily', label: '', image: require('../../assets/images/Oily.png')},
-    {id: 'normal', label: '', image: require('../../assets/images/Normal.png')},
-    {id: 'acne', label: '', image: require('../../assets/images/acne1.png')},
+    {id: 'dry', label: 'Dry', image: require('../../assets/images/Dry.png')},
+    {id: 'oily', label: 'Oily', image: require('../../assets/images/Oily.png')},
+    {
+      id: 'normal',
+      label: 'Normal',
+      image: require('../../assets/images/Normal.png'),
+    }, // ✅ Added id
+    {
+      id: 'acne',
+      label: 'Acne-Prone',
+      image: require('../../assets/images/acne1.png'),
+    },
     {
       id: 'combination',
-      label: '',
+      label: 'Combination',
       image: require('../../assets/images/Combination.png'),
     },
   ];
@@ -26,6 +37,26 @@ const Skintype = ({navigation}) => {
   const handleSkinTypeSelection = id => {
     setSelectedSkinType(id);
   };
+
+  useEffect(() => {
+    // Retrieve stored skin type from MMKV
+    const storedData = storage.getString('onboarding_data');
+    console.log('Stored MMKV Data:', storedData);
+    console.log('All MMKV Keys:', storage.getAllKeys());
+
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const skinFactors = parsedData?.skin_factors;
+      if (skinFactors?.skin_type) {
+        const filteredSkinTypeId = skinTypes.find(
+          type =>
+            type?.id.toLowerCase() === skinFactors?.skin_type.toLowerCase(),
+        )?.id;
+        setSelectedSkinType(filteredSkinTypeId ?? '');
+      }
+    }
+  }, []);
+  console.log('sel skin', selectedSkinType);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -36,11 +67,6 @@ const Skintype = ({navigation}) => {
         </View>
         <Text style={styles.progressText}>36%</Text>
       </View>
-
-      {/* Back Button */}
-      {/* <TouchableOpacity style={styles.backButton} onPress={() => {}}>
-        <Text style={styles.backButtonText}>◀</Text>
-      </TouchableOpacity> */}
 
       {/* Heading */}
       <View style={styles.headingContainer}>
@@ -61,7 +87,17 @@ const Skintype = ({navigation}) => {
               selectedSkinType === skinType.id && styles.selectedOption,
             ]}
             onPress={() => handleSkinTypeSelection(skinType.id)}>
-            <Image source={skinType.image} style={styles.image} />
+            <View
+              style={[
+                styles.imageWrapper,
+                selectedSkinType === skinType.id && styles.selectedBorder,
+              ]}>
+              <Image
+                source={skinType.image}
+                style={styles.image}
+                resizeMode="contain"
+              />
+            </View>
             <Text style={styles.optionLabel}>{skinType.label}</Text>
           </TouchableOpacity>
         ))}
@@ -73,10 +109,18 @@ const Skintype = ({navigation}) => {
         onPress={() => {
           if (selectedSkinType) {
             console.log(`Selected type: ${selectedSkinType}`);
-            navigation.navigate('Skintone', {type: `${selectedSkinType}`});
-            // Navigate to the next screen or perform an action here
+
+            saveOnboardingData({
+              skin_factors: {
+                ...getOnboardingData()?.skin_factors,
+                skin_type: selectedSkinType,
+              },
+            });
+
+            // Navigate to the next screen
+            navigation.navigate('Skintone', {type: selectedSkinType});
           } else {
-            alert('Please select a Skintype to continue.');
+            Alert.alert('Please select a Skin Type to continue.');
           }
         }}>
         <Text style={styles.continueButtonText}>Continue</Text>
@@ -114,21 +158,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#333',
   },
-  backButton: {
-    marginVertical: 8,
-    alignSelf: 'flex-start',
-  },
-  backButtonText: {
-    fontSize: 24,
-    color: '#000',
-  },
   headingContainer: {
     alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
+    marginVertical: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
     textAlign: 'center',
     color: '#000',
@@ -138,29 +173,39 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#666',
     marginTop: 8,
+    paddingHorizontal: 20,
   },
   optionsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    top: -100,
+    marginVertical: 20,
   },
   option: {
-    width: 80,
-    height: 100,
-    margin: 8,
     alignItems: 'center',
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    margin: 12,
   },
-  selectedOption: {
-    borderColor: 'transparent',
+  imageWrapper: {
+    width: 90,
+    height: 110,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    backgroundColor: '#FFF',
+    padding: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: {width: 0, height: 4},
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  selectedBorder: {
+    borderWidth: 2,
+    borderColor: '#000',
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 30,
+    width: '100%',
+    height: '100%',
   },
   optionLabel: {
     marginTop: 8,
@@ -173,11 +218,11 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginTop: 'auto',
+    alignItems: 'center',
   },
   continueButtonText: {
     color: '#FFF',
     fontSize: 16,
-    textAlign: 'center',
     fontWeight: '600',
   },
 });

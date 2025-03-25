@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -8,7 +8,10 @@ import {
   FlatList,
   Dimensions,
   Image,
+  Alert,
 } from 'react-native';
+import {getOnboardingData, saveOnboardingData} from '../../utils/common';
+import {storage} from '../../utils/storage';
 
 const Concerns = ({navigation}) => {
   const [selectedConcerns, setSelectedConcerns] = useState([]);
@@ -61,12 +64,28 @@ const Concerns = ({navigation}) => {
   ];
 
   const handleConcernSelection = id => {
-    if (selectedConcerns.includes(id)) {
-      setSelectedConcerns(selectedConcerns.filter(concern => concern !== id));
-    } else {
-      setSelectedConcerns([...selectedConcerns, id]);
-    }
+    setSelectedConcerns(prev => {
+      const uniqueSelections = [...new Set(prev)];
+      return uniqueSelections.includes(id)
+        ? uniqueSelections.filter(concern => concern !== id)
+        : [...uniqueSelections, id];
+    });
   };
+  useEffect(() => {
+    const storedData = storage.getString('onboarding_data');
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        if (parsedData?.skin_factors?.concerns) {
+          setSelectedConcerns(parsedData.skin_factors.concerns);
+        }
+      } catch (error) {
+        console.error('Error parsing onboarding data:', error);
+      }
+    }
+  }, []);
+
+  console.log('seee', selectedConcerns);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -77,12 +96,10 @@ const Concerns = ({navigation}) => {
         </View>
         <Text style={styles.progressText}>69%</Text>
       </View>
-
       {/* Back Button */}
       {/* <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>◀</Text>
       </TouchableOpacity> */}
-
       {/* Heading */}
       <View style={styles.headingContainer}>
         <Text style={styles.title}>What are your concerns?</Text>
@@ -91,39 +108,65 @@ const Concerns = ({navigation}) => {
           recommendations.
         </Text>
       </View>
-
       {/* Concern Options */}
       <FlatList
         data={concerns}
-        keyExtractor={item => item.toString()}
+        keyExtractor={item => item.id.toString()}
         numColumns={3}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.optionsContainer}
-        renderItem={({item}) => (
-          <View>
-            <TouchableOpacity
-              key={item.id}
-              style={[styles.option, selectedConcerns === item]}
-              onPress={() => handleConcernSelection(item)}>
-              <Image source={item.image} style={styles.image} />
-            </TouchableOpacity>
-            <Text style={styles.optionLabel}>{item.label}</Text>\
-          </View>
-        )}
-      />
+        renderItem={({item}) => {
+          const isSelected = selectedConcerns.find(i => i.id === item.id);
+          console.log(
+            'isss',
+            selectedConcerns.find(i => i.id === item.id),
+            item,
+          );
 
-      {/* Continue Button */}
+          return (
+            <View>
+              <TouchableOpacity
+                key={item.id}
+                style={[styles.option, isSelected && styles.selectedOption]}
+                onPress={() => handleConcernSelection(item)}>
+                <Image source={item.image} style={styles.image} />
+                {isSelected && (
+                  <View style={styles.checkmarkContainer}>
+                    <Text style={styles.checkmark}>✓</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+              <Text style={styles.optionLabel}>{item.label}</Text>\
+            </View>
+          );
+        }}
+      />;
+      {
+        /* Continue Button */
+      }
       <TouchableOpacity
         style={styles.continueButton}
         onPress={() => {
           if (selectedConcerns.length > 0) {
+            console.log(`Selected Concerns: ${selectedConcerns}`);
+
+            // Save concerns in MMKV before navigating
+            saveOnboardingData({
+              skin_factors: {
+                ...getOnboardingData()?.skin_factors, // Preserve existing skin factors
+                concerns: selectedConcerns,
+              },
+            });
+
+            // Navigate to the next screen
             navigation.navigate('Experience', {concerns: selectedConcerns});
           } else {
-            alert('Please select a Concerns to continue.');
+            Alert.alert('Please select at least one concern to continue.');
           }
         }}>
         <Text style={styles.continueButtonText}>Continue</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>;
+      ; ; ;;
     </SafeAreaView>
   );
 };
@@ -207,7 +250,7 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     borderColor: '#000',
-    borderWidth: 2,
+    borderWidth: 3,
   },
   optionLabel: {
     fontSize: 14,
@@ -233,6 +276,22 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: '#999',
+  },
+  checkmarkContainer: {
+    position: 'absolute',
+    right: 8,
+    top: 8,
+    backgroundColor: '#4CAF50',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmark: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
 

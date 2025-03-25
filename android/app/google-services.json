@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "470418142403-q1il3nrjp6rc0880l1h1sdgnlte6nrpv.apps.googleusercontent.com",
+          "client_id": "470418142403-gcb9chhbioc2hb4r841cni6qbsho3ov8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.sophielondon.app",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "certificate_hash": "0ce68c792ff654c1dba7a957aaa5cb82bbcb6c8d"
           }
         },
         {

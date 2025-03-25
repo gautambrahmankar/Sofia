@@ -1,11 +1,14 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
+import {getOnboardingData, saveOnboardingData} from '../../utils/common';
+import { storage } from '../../utils/storage';
 
 const Experience = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -15,6 +18,21 @@ const Experience = ({navigation}) => {
     {id: 'few_times', label: 'I tried a few times'},
     {id: 'no_idea', label: 'I have no idea'},
   ];
+
+  useEffect(() => {
+    const storedData = storage.getString('onboarding_data');
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        if (parsedData?.skin_factors?.experience_level) {
+          setSelectedOption(parsedData.skin_factors.experience_level);
+        }
+      } catch (error) {
+        console.error('Error parsing onboarding data:', error);
+      }
+    }
+  }, []);
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -67,9 +85,20 @@ const Experience = ({navigation}) => {
         style={styles.continueButton}
         onPress={() => {
           if (selectedOption) {
+            console.log(`Selected Experience: ${selectedOption}`);
+
+            // Save experience level in MMKV before navigating
+            saveOnboardingData({
+              skin_factors: {
+                ...getOnboardingData()?.skin_factors,
+                experience_level: selectedOption,
+              },
+            });
+
+            
             navigation.navigate('Goals', {experience: selectedOption});
           } else {
-            alert('Please select your experience to continue.');
+            Alert.alert('Please select your experience level to continue.');
           }
         }}>
         <Text style={styles.continueButtonText}>Continue</Text>

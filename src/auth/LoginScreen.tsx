@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,61 +7,30 @@ import {
   StyleSheet,
   Dimensions,
   Alert,
+  Platform,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {storage} from '../utils/storage';
+import {handleGoogleSignIn} from '../utils/googleAuth';
 
 const {height, width} = Dimensions.get('window');
 
-// Configure Google Sign-In
-GoogleSignin.configure({
-  webClientId:
-    '470418142403-gohr7pv9qr3hg2s0gdg0cfdgpipe7i1b.apps.googleusercontent.com', // Replace with your Firebase Web Client ID
-  offlineAccess: true, // Required for getting refresh token
-});
-
 function LoginScreen({navigation}: {navigation: any}) {
-  const handleGoogleSignIn = async () => {
-    try {
-      console.log('Starting Google Sign-In...');
-      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-      console.log('Play Services available.');
-
-      const {idToken, user} = await GoogleSignin.signIn();
-      console.log(
-        'Google Sign-In Response:',
-        JSON.stringify({idToken, user}, null, 2),
-      );
-
-      if (!idToken) {
-        throw new Error('ID Token is missing from Google Sign-In response.');
-      }
-
-      console.log('Attempting Firebase Authentication...');
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      const userCredential = await auth().signInWithCredential(
-        googleCredential,
-      );
-
-      console.log('Firebase Authentication successful:', userCredential.user);
-      Alert.alert(
-        'Success',
-        `Welcome, ${userCredential.user.displayName || user.name}!`,
-      );
-      navigation.navigate('MainStack'); // Navigate to the main screen
-    } catch (error) {
-      console.error('Google Sign-In Error:', JSON.stringify(error, null, 2));
-      Alert.alert(
-        'Error',
-        error.message ||
-          'An unexpected error occurred during Google Sign-In. Please try again.',
-      );
-    }
-  };
-
+  // const webClientId =
+  //   '470418142403-gcb9chhbioc2hb4r841cni6qbsho3ov8.apps.googleusercontent.com';
+  // useEffect(() => {
+  //   GoogleSignin.configure({
+  //     webClientId: webClientId,
+  //   });
+  // }, []);
   return (
     <View style={{flex: 1}}>
       {/* Gradient Section */}
@@ -74,7 +43,7 @@ function LoginScreen({navigation}: {navigation: any}) {
         </Text>
 
         <Image
-          source={require('../assets/images/LoginImage.png')} // Replace with your signup image path
+          source={require('../assets/images/signup_bg.jpg')}
           style={styles.image}
         />
       </LinearGradient>
@@ -84,17 +53,19 @@ function LoginScreen({navigation}: {navigation: any}) {
         <Text style={styles.startText}>Your skin journey starts here!</Text>
 
         {/* Login with Apple */}
-        <TouchableOpacity
-          style={[styles.button, styles.appleButton]}
-          onPress={() => navigation.navigate('LoginApple')}>
-          <FontAwesome
-            name="apple"
-            size={20}
-            color="white"
-            style={styles.icon}
-          />
-          <Text style={styles.appleButtonText}>Login with Apple</Text>
-        </TouchableOpacity>
+        {Platform.OS === 'ios' && (
+          <TouchableOpacity
+            style={[styles.button, styles.appleButton]}
+            onPress={() => navigation.navigate('LoginApple')}>
+            <FontAwesome
+              name="apple"
+              size={20}
+              color="white"
+              style={styles.icon}
+            />
+            <Text style={styles.appleButtonText}>Login with Apple</Text>
+          </TouchableOpacity>
+        )}
 
         {/* Login with Email */}
         <TouchableOpacity
@@ -114,7 +85,7 @@ function LoginScreen({navigation}: {navigation: any}) {
         {/* Login with Google */}
         <TouchableOpacity
           style={[styles.button, styles.googleButton]}
-          onPress={() => handleGoogleSignIn()}>
+          onPress={() => handleGoogleSignIn(navigation)}>
           <FontAwesome
             name="google"
             size={20}
@@ -146,6 +117,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 20,
+    backgroundColor: 'green',
     paddingBottom: height * 0.07, // To make gradient end before the white container
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
@@ -163,10 +135,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   image: {
-    // width: width * 0.8,
-    // height: height * 0.2,
-    // borderRadius: 18,
+    width: width,
+    height: height * 0.3,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
     marginVertical: 20,
+    backgroundColor: 'green',
     resizeMode: 'cover',
   },
   whiteContainer: {
@@ -176,7 +150,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     alignItems: 'center',
     paddingTop: 20,
-    marginTop: -height * 0.08, // To slightly overlap the gradient section
+    marginTop: -height * 0.1, // To slightly overlap the gradient section
   },
   startText: {
     fontSize: 18,

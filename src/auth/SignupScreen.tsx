@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Platform,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
+import {handleGoogleSignIn} from '../utils/googleAuth';
 
 const {height, width} = Dimensions.get('window');
 
@@ -26,7 +28,7 @@ function SignupScreen({navigation}: {navigation: any}) {
         </Text>
 
         <Image
-          source={require('../assets/images/LoginImage.png')} // Replace with your signup image path
+          source={require('../assets/images/signup_bg.jpg')}
           style={styles.image}
         />
       </LinearGradient>
@@ -36,17 +38,19 @@ function SignupScreen({navigation}: {navigation: any}) {
         <Text style={styles.startText}>Your skin journey starts here!</Text>
 
         {/* Sign up with Apple */}
-        <TouchableOpacity
-          style={[styles.button, styles.appleButton]}
-          onPress={() => navigation.navigate('SignupApple')}>
-          <FontAwesome
-            name="apple"
-            size={20}
-            color="white"
-            style={styles.icon}
-          />
-          <Text style={styles.appleButtonText}>Sign up with Apple</Text>
-        </TouchableOpacity>
+        {Platform.OS === 'ios' && (
+          <TouchableOpacity
+            style={[styles.button, styles.appleButton]}
+            onPress={() => navigation.navigate('SignupApple')}>
+            <FontAwesome
+              name="apple"
+              size={20}
+              color="white"
+              style={styles.icon}
+            />
+            <Text style={styles.appleButtonText}>Sign up with Apple</Text>
+          </TouchableOpacity>
+        )}
 
         {/* Sign up with Email */}
         <TouchableOpacity
@@ -66,7 +70,7 @@ function SignupScreen({navigation}: {navigation: any}) {
         {/* Sign up with Google */}
         <TouchableOpacity
           style={[styles.button, styles.googleButton]}
-          onPress={() => navigation.navigate('SignupGoogle')}>
+          onPress={() => handleGoogleSignIn(navigation)}>
           <FontAwesome
             name="google"
             size={20}
@@ -100,7 +104,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 20,
-    paddingBottom: height * 0.07, // To make gradient end before the white container
+    paddingBottom: height * 0.07,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },
@@ -117,10 +121,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   image: {
-    // width: width * 0.8,
-    // height: height * 0.2,
-    // borderRadius: 18,
-    marginVertical: 20,
+    width: width,
+    height: height * 0.3,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    marginTop: 65,
     resizeMode: 'cover',
   },
   whiteContainer: {

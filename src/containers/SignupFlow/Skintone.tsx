@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -6,10 +6,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
+import {getOnboardingData, saveOnboardingData} from '../../utils/common';
+import {storage} from '../../utils/storage';
 
 const Skintone = ({navigation}) => {
-  const [selectedTone, setSelectedTone] = useState(null);
+  const [selectedTone, setSelectedTone] = useState('dark');
   const tones = [
     {id: 'dark', label: 'Dark', color: '#8B5E3C'},
     {id: 'medium', label: 'Medium', color: '#C99778'},
@@ -21,6 +24,24 @@ const Skintone = ({navigation}) => {
   const handleToneSelection = id => {
     setSelectedTone(id);
   };
+
+  useEffect(() => {
+    // Retrieve gender from MMKV if available
+    const storedData = storage.getString('onboarding_data');
+    console.log('kk', storedData);
+    console.log('All MMKV Keys:', storage.getAllKeys());
+
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const parsedSkinTone = parsedData?.skin_factors?.skin_tone;
+      if (parsedSkinTone) {
+        const filteredSkinToneId = tones?.find(
+          type => type?.id === parsedSkinTone,
+        )?.id;
+        setSelectedTone(filteredSkinToneId ?? '');
+      }
+    }
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -75,10 +96,19 @@ const Skintone = ({navigation}) => {
         style={[styles.continueButton]}
         onPress={() => {
           if (selectedTone) {
-            navigation.navigate('Concerns', {skinTone: `${selectedTone}`});
-            // Navigate to the next screen or perform an action here
+            console.log(`Selected Skin Tone: ${selectedTone}`);
+
+            saveOnboardingData({
+              skin_factors: {
+                ...getOnboardingData()?.skin_factors,
+                skin_tone: selectedTone,
+              },
+            });
+
+            // Navigate to the next screen
+            navigation.navigate('Concerns', {skinTone: selectedTone});
           } else {
-            alert('Please select a Skintone to continue.');
+            Alert.alert('Please select a Skin Tone to continue.');
           }
         }}>
         <Text style={styles.continueButtonText}>Continue</Text>

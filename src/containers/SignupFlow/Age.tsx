@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,14 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
+import {saveOnboardingData} from '../../utils/common';
+import {storage} from '../../utils/storage';
 
 const {height} = Dimensions.get('window');
 
 const Age = ({navigation}) => {
   const [selectedAge, setSelectedAge] = useState(null);
+  const flatListRef = useRef(null);
 
   // Dynamically generate ages from 18 to 100
   const ages = Array.from({length: 83}, (_, i) => i + 18);
@@ -23,6 +26,40 @@ const Age = ({navigation}) => {
   const handleAgeSelect = age => {
     setSelectedAge(age);
   };
+
+  useEffect(() => {
+    // Retrieve gender from MMKV if available
+    const storedData = storage.getString('onboarding_data');
+    console.log('kk', storedData);
+    console.log('All MMKV Keys:', storage.getAllKeys());
+
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      if (parsedData?.age) {
+        setSelectedAge(parsedData.age);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedAge && flatListRef.current) {
+      const index = ages.indexOf(selectedAge);
+      if (index !== -1) {
+        setTimeout(() => {
+          flatListRef.current.scrollToIndex({
+            index,
+            animated: true,
+            viewPosition: 0.5,
+          });
+        }, 300);
+      }
+    }
+  }, [selectedAge]);
+
+  // const handleScrollEnd = event => {
+  //   const index = Math.round(event.nativeEvent.contentOffset.y / ITEM_HEIGHT);
+  //   setSelectedAge(ages[index]);
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -46,6 +83,7 @@ const Age = ({navigation}) => {
       {/* Scrollable Age Picker */}
       <FlatList
         data={ages}
+        ref={flatListRef}
         keyExtractor={item => item.toString()}
         renderItem={({item}) => (
           <TouchableOpacity
@@ -71,6 +109,7 @@ const Age = ({navigation}) => {
         snapToInterval={ITEM_HEIGHT}
         decelerationRate={'fast'}
         bounces={false}
+        // onMomentumScrollEnd={handleScrollEnd}
         getItemLayout={(data, index) => ({
           length: ITEM_HEIGHT,
           offset: ITEM_HEIGHT * index,
@@ -87,7 +126,11 @@ const Age = ({navigation}) => {
         onPress={() => {
           if (selectedAge) {
             console.log(`Selected Age: ${selectedAge}`);
-            navigation.navigate('Skintype', {Age: `${selectedAge}`});
+
+            saveOnboardingData({age: selectedAge});
+
+            // Navigate to the next screen
+            navigation.navigate('Skintype', {Age: selectedAge});
           } else {
             alert('Please select your age to continue.');
           }
