@@ -118,6 +118,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 8,
+    width: '90%',
+    alignSelf: 'center',
   },
   progressBarBackground: {
     flex: 1,
@@ -146,6 +148,8 @@ const styles = StyleSheet.create({
   },
   headingContainer: {
     marginVertical: 16,
+    width: '90%',
+    alignSelf: 'center',
   },
   title: {
     fontSize: 22,
@@ -161,6 +165,8 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     marginVertical: 16,
+    width: '90%',
+    alignSelf: 'center',
   },
   option: {
     width: '100%',
@@ -186,6 +192,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginTop: 'auto',
+    width: '90%',
+    alignSelf: 'center',
   },
   continueButtonText: {
     color: '#FFF',

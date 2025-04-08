@@ -10,11 +10,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {goBack, navigate} from '../navigation/navigationUtils';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
+import SafeAreaWrapper from '../navigation/SafeAreaViewWrapper';
 
 const ScanFaceScreen = () => {
   const {t} = useTranslation();
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaWrapper style={styles.container}>
       <View style={styles.header}>
         <MaterialIcons
           name="arrow-back"
@@ -58,7 +59,7 @@ const ScanFaceScreen = () => {
         onPress={() => navigate('FaceCapture', {})}>
         <Text style={styles.buttonText}>{t('get_started')}</Text>
       </TouchableOpacity>
-    </ScrollView>
+    </SafeAreaWrapper>
   );
 };
 
@@ -77,10 +78,11 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     // backgroundColor: 'green',
-    width: '100%',
     // justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+    width: '90%',
+    alignSelf: 'center',
   },
   headerTitle: {
     fontSize: 20,
@@ -100,7 +102,6 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   card: {
-    width: '100%',
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 16,
@@ -109,6 +110,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
+    width: '90%',
+    alignSelf: 'center',
   },
   cardTitle: {
     fontSize: 16,
@@ -128,12 +131,13 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   button: {
-    width: '100%',
     backgroundColor: '#000',
     paddingVertical: 14,
     borderRadius: 20,
     marginTop: 30,
     alignItems: 'center',
+    width: '90%',
+    alignSelf: 'center',
   },
   buttonText: {
     color: '#fff',

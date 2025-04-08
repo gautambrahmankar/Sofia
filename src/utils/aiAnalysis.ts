@@ -25,54 +25,92 @@ export const analyzeFace = async (photoUri, faces) => {
           role: 'user',
           parts: [
             {
-              text: `Analyze this face for common skin concerns such as acne, dark circles, blackheads, and pores. Identify the severity of each concern as a percentage and provide a skin health score (0-100). 
-  
-                Additionally, annotate affected areas by returning approximate coordinates (x, y in percentage relative to the image dimensions) for each issue. 
-                also give me image height and width 
-                - **Dark Circles** must be located **only under the eyes**.
-- **Blackheads** are primarily found on the **nose** and **cheeks**.
-- **Acne** can appear on the **cheeks, forehead, and chin**.
-- **Pores** are more prominent on the **nose and surrounding areas**.
-
-only give coordinates if these are present
-provide accurate skin age and health
-                The response must be a structured JSON in the following format:
-  
-                {
-                  "skinHealth": <integer>, 
-                  "skinAge": <integer>, 
-                  "concerns": [
-                    {"name": "Pores", "percentage": <integer>},
-                    {"name": "Acne", "percentage": <integer>},
-                    {"name": "Dark Circles", "percentage": <integer>},
-                    {"name": "Dark Spots", "percentage": <integer>}
-                  ],
-                  "imageHeight" : <integer>,
-                   "imageWidth" : <integer>,
-                  "annotations": [
-                    {
-                      "label": "Dark Circles",
-                      "coordinates": [{"x": <integer>, "y": <integer>}] // Must be directly below the eyes
-                    },
-                    {
-                      "label": "Blackheads",
-                      "coordinates": [{"x": <integer>, "y": <integer>}]  // Primarily on the nose and cheeks
-                    },
-                    {
-                      "label": "Acne",
-                      "coordinates": [{"x": <integer>, "y": <integer>}]  // Can appear on cheeks, forehead, or chin
-                    }
-                  ]
-                }
-  
-                Ensure the coordinates are relative to the image dimensions (in percentage). **Return only the JSON response** without any additional text.`,
+              text: `You are analyzing a facial image for skin concerns. Your goal is to identify and return data in JSON format only.
+    
+    Analyze the image for these skin concerns:
+    - Acne
+    - Dark Circles
+    - Blackheads
+    - Pores
+    - Dark Spots
+    
+    For each concern, provide:
+    - Name (e.g., "Acne")
+    - Severity as a percentage (0-100)
+    - Severity level as one of: "Mild", "Moderate", or "Severe"
+    - Description: Provide a longer, natural-sounding explanation (2–3 sentences) that includes only the reasons why the issue is present in the scanned face. Focus on contributing factors such as excess oil production, clogged pores, buildup of dead skin cells, environmental pollution, stress, genetics, lifestyle habits, or irregular cleansing routines. Do not include a generic definition or explanation of what the concern is.
+    - Advice: Provide actionable advice with recommendations for skincare routines, and if applicable, suggest one or more products from the following Sophie Cosmetics products:
+      - Sophie Cosmetics London - Anti-Aging Cream (Anti-Aging)
+      - Sophie Cosmetics London - Face Cleanser
+      - Sophie Cosmetics London - Hair Care Oil 
+      - Sophie Cosmetics London - Moisturizer Hydrating Cream 
+      - Sophie Cosmetics London - Two Phase Make-Up Remover
+    Include the product name and URL (if applicable) in your advice when relevant. The advice should be approximately 2 sentences long.
+    
+    Additionally, report presence detection only for each issue. For this, return an "annotations" array. For each concern in "annotations", provide:
+    - Label: Name of the concern
+    - Present: true if the issue is detected, false otherwise
+    
+    Do not include any coordinates or location data.
+    
+    Return strictly valid JSON in this format:
+    
+    {
+      "skinHealth": <integer>,
+      "skinAge": <integer>,
+      "concerns": [
+        {
+          "name": "Pores",
+          "percentage": <integer>,
+          "severityLevel": "Mild" | "Moderate" | "Severe",
+          "description": "<string>",
+          "advice": "<string>"
+        },
+        {
+          "name": "Acne",
+          "percentage": <integer>,
+          "severityLevel": "Mild" | "Moderate" | "Severe",
+          "description": "<string>",
+          "advice": "<string>"
+        },
+        {
+          "name": "Dark Circles",
+          "percentage": <integer>,
+          "severityLevel": "Mild" | "Moderate" | "Severe",
+          "description": "<string>",
+          "advice": "<string>"
+        },
+        {
+          "name": "Dark Spots",
+          "percentage": <integer>,
+          "severityLevel": "Mild" | "Moderate" | "Severe",
+          "description": "<string>",
+          "advice": "<string>"
+        },
+        {
+          "name": "Blackheads",
+          "percentage": <integer>,
+          "severityLevel": "Mild" | "Moderate" | "Severe",
+          "description": "<string>",
+          "advice": "<string>"
+        }
+      ],
+      "annotations": [
+        { "label": "Dark Circles", "present": true | false },
+        { "label": "Blackheads", "present": true | false },
+        { "label": "Acne", "present": true | false },
+        { "label": "Pores", "present": true | false },
+        { "label": "Dark Spots", "present": true | false }
+      ]
+    }
+    
+    Respond with only the JSON object. No explanations, no additional text. Ensure the JSON is strictly valid.`,
             },
             {inlineData: {mimeType: 'image/jpeg', data: base64Image}},
           ],
         },
       ],
     });
-
     console.log('response ai', response);
 
     // Extract AI response
@@ -90,6 +128,42 @@ provide accurate skin age and health
   } catch (error) {
     console.error('Error analyzing face:', error);
     return null;
+  }
+};
+
+export const detectFacePresence = async photoUri => {
+  try {
+    const base64Image = await RNFS.readFile(photoUri, 'base64');
+
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-1.5-pro-latest',
+    });
+
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: `Does this image contain at least one clearly visible human face? Respond with only "true" or "false". Do not include any other text.`,
+            },
+            {
+              inlineData: {
+                mimeType: 'image/jpeg',
+                data: base64Image,
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    const answer =
+      result.response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    return answer?.toLowerCase() === 'true';
+  } catch (error) {
+    console.error('Error detecting face presence:', error);
+    return false;
   }
 };
 

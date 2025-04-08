@@ -6,6 +6,7 @@ import LocalNotification from './src/helpers/LocalNotification';
 import {navigationRef} from './src/navigation/navigationUtils';
 import {LogBox} from 'react-native';
 import {configureGoogleSignIn} from './src/utils/googleAuth';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 LogBox.ignoreAllLogs();
 const App = () => {
@@ -15,9 +16,11 @@ const App = () => {
   }, []);
 
   return (
-    <NavigationContainer ref={navigationRef}>
-      <AuthStack />
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer ref={navigationRef}>
+        <AuthStack />
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 

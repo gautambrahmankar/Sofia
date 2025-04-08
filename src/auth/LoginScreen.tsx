@@ -20,10 +20,13 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {storage} from '../utils/storage';
 import {handleGoogleSignIn} from '../utils/googleAuth';
+import appleAuth from '@invertase/react-native-apple-authentication';
+import Loader from '../components/Loader';
 
 const {height, width} = Dimensions.get('window');
 
 function LoginScreen({navigation}: {navigation: any}) {
+  const [loading, setLoading] = React.useState(false);
   // const webClientId =
   //   '470418142403-gcb9chhbioc2hb4r841cni6qbsho3ov8.apps.googleusercontent.com';
   // useEffect(() => {
@@ -31,6 +34,41 @@ function LoginScreen({navigation}: {navigation: any}) {
   //     webClientId: webClientId,
   //   });
   // }, []);
+
+  const handleAppleLogin = async () => {
+    try {
+      setLoading(true);
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
+
+      const {user, identityToken, email, fullName} = appleAuthRequestResponse;
+
+      if (!identityToken) {
+        Alert.alert('Login Failed', 'No identity token returned');
+        return;
+      }
+
+      // Example: send token to Firebase or your own backend
+      const appleCredential = auth.AppleAuthProvider.credential(
+        identityToken,
+        appleAuthRequestResponse.nonce, // optional
+      );
+
+      await auth().signInWithCredential(appleCredential);
+
+      // You can now navigate to the app or save user data
+      console.log('Apple Login success:', {user, email, fullName});
+    } catch (error) {
+      setLoading(false);
+      console.warn('Apple Sign-In Error:', error);
+      Alert.alert('Login Error', 'Something went wrong during Apple Sign-In');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={{flex: 1}}>
       {/* Gradient Section */}
@@ -56,7 +94,7 @@ function LoginScreen({navigation}: {navigation: any}) {
         {Platform.OS === 'ios' && (
           <TouchableOpacity
             style={[styles.button, styles.appleButton]}
-            onPress={() => navigation.navigate('LoginApple')}>
+            onPress={handleAppleLogin}>
             <FontAwesome
               name="apple"
               size={20}
@@ -85,7 +123,7 @@ function LoginScreen({navigation}: {navigation: any}) {
         {/* Login with Google */}
         <TouchableOpacity
           style={[styles.button, styles.googleButton]}
-          onPress={() => handleGoogleSignIn(navigation)}>
+          onPress={() => handleGoogleSignIn(navigation, setLoading)}>
           <FontAwesome
             name="google"
             size={20}
@@ -107,6 +145,7 @@ function LoginScreen({navigation}: {navigation: any}) {
           </Text>
         </Text>
       </View>
+      <Loader visible={loading} message="Signing you in..." />
     </View>
   );
 }
@@ -117,7 +156,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 20,
-    backgroundColor: 'green',
+    // backgroundColor: 'green',
     paddingBottom: height * 0.07, // To make gradient end before the white container
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
@@ -135,13 +174,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   image: {
-    width: width,
+    width: '100%',
     height: height * 0.3,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     marginVertical: 20,
-    backgroundColor: 'green',
-    resizeMode: 'cover',
+    // backgroundColor: 'green',
+    resizeMode: 'repeat',
   },
   whiteContainer: {
     backgroundColor: '#ffffff',

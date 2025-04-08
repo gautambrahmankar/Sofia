@@ -14,10 +14,10 @@ import {
 } from 'react-native';
 import {Camera} from 'react-native-camera-kit';
 import Icon from 'react-native-vector-icons/Ionicons';
-import FaceDetection, {Face} from '@react-native-ml-kit/face-detection';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {goBack} from '../navigation/navigationUtils';
 import {useFocusEffect} from '@react-navigation/native';
+import {detectFacePresence} from '../utils/aiAnalysis';
 
 const {width, height} = Dimensions.get('window');
 
@@ -63,29 +63,18 @@ const SelfieCameraScreen = ({navigation}) => {
     checkPermissions();
   }, []);
 
-  // ML Kit Face Detection Logic
-  const detectFaceUsingMLKit = async photoUri => {
-    try {
-      setIsDetectingFace(true);
-      const facesTaken = await FaceDetection.detect(photoUri, {
-        performanceMode: 'accurate',
-        landmarkMode: 'all',
-        classificationMode: 'all',
-      });
-      console.log('Detected faces:', facesTaken);
-      if (facesTaken.length > 0) {
-        setfaces(facesTaken);
-        setPhoto({uri: photoUri});
-      } else {
-        Alert.alert('Retake Photo', 'No face detected. Please try again.');
-        setPhoto(null);
-      }
-    } catch (error) {
-      console.error('Face detection error:', error);
-      Alert.alert('Error', 'Could not process the image.');
-    } finally {
-      setIsDetectingFace(false);
+  const handleFaceCheck = async photoUri => {
+    setIsDetectingFace(true);
+    const hasFace = await detectFacePresence(photoUri);
+
+    if (hasFace) {
+      setPhoto({uri: photoUri});
+    } else {
+      Alert.alert('Retake Photo', 'No face detected. Please try again.');
+      setPhoto(null);
     }
+
+    setIsDetectingFace(false);
   };
 
   // Capture Image and Perform Face Detection
@@ -95,7 +84,7 @@ const SelfieCameraScreen = ({navigation}) => {
         const image = await cameraRef.current.capture();
         const photoUri = image.uri;
         console.log('Captured image:', photoUri);
-        detectFaceUsingMLKit(photoUri);
+        handleFaceCheck(photoUri);
       } catch (error) {
         console.error('Error taking picture:', error);
       }
@@ -105,14 +94,6 @@ const SelfieCameraScreen = ({navigation}) => {
   const confirmPhoto = () => {
     if (photo) {
       navigation.navigate('SkinAnalysis', {photoUri: photo.uri, faces});
-    }
-  };
-
-  const cancelCapture = () => {
-    if (photo) {
-      setPhoto(null);
-    } else {
-      navigation.goBack();
     }
   };
 

@@ -12,6 +12,7 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {goBack} from '../navigation/navigationUtils';
+import SafeAreaWrapper from '../navigation/SafeAreaViewWrapper';
 
 const categoryMap = {
   all: 'all',
@@ -108,89 +109,91 @@ export default function ProductsScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <MaterialIcons
-          name="arrow-back"
-          size={24}
-          color="black"
-          onPress={goBack}
-        />
-        <Text style={styles.headerTitle}>{t('products_heading')}</Text>
-        <MaterialIcons name="shopping-bag" size={24} color="black" />
-      </View>
-
-      {/* Category Scroll */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoryScroll}>
-        {categories.map((category, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.categoryButton,
-              selectedCategory === category && styles.categoryButtonActive,
-            ]}
-            onPress={() => setSelectedCategory(category)}>
-            <Text
-              style={[
-                styles.categoryText,
-                selectedCategory === category && styles.categoryTextActive,
-              ]}>
-              {t(category)}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {filteredProducts.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyText}>{t('no_products')}</Text>
-          <TouchableOpacity
-            style={styles.exploreButton}
-            onPress={() => setSelectedCategory('all')}>
-            <Text style={styles.exploreText}>{t('explore_products')}</Text>
-          </TouchableOpacity>
+    <SafeAreaWrapper>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <MaterialIcons
+            name="arrow-back"
+            size={24}
+            color="black"
+            onPress={goBack}
+          />
+          <Text style={styles.headerTitle}>{t('products_heading')}</Text>
+          <MaterialIcons name="shopping-bag" size={24} color="black" />
         </View>
-      ) : (
-        <FlatList
-          data={filteredProducts}
-          // numColumns={2}
-          keyExtractor={item => `${item.id}`}
-          renderItem={({item}) => (
+
+        {/* Category Scroll */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoryScroll}>
+          {categories.map((category, index) => (
             <TouchableOpacity
-              style={styles.card}
-              onPress={() => {
-                if (redirectURL) {
-                  Linking.openURL(redirectURL);
-                }
-              }}>
-              <Image
-                source={item.image}
-                style={styles.productImage}
-                resizeMode="cover"
-              />
-              <Text style={styles.productName}>{t(item.name)}</Text>
-              <Text style={styles.productType}>{t(item.type)}</Text>
-              {/* <Text style={styles.productPrice}>
-                {t('price')}: {item.price}
-              </Text> */}
+              key={index}
+              style={[
+                styles.categoryButton,
+                selectedCategory === category && styles.categoryButtonActive,
+              ]}
+              onPress={() => setSelectedCategory(category)}>
+              <Text
+                style={[
+                  styles.categoryText,
+                  selectedCategory === category && styles.categoryTextActive,
+                ]}>
+                {t(category)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {filteredProducts.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>{t('no_products')}</Text>
+            <TouchableOpacity
+              style={styles.exploreButton}
+              onPress={() => setSelectedCategory('all')}>
+              <Text style={styles.exploreText}>{t('explore_products')}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredProducts}
+            // numColumns={2}
+            keyExtractor={item => `${item.id}`}
+            renderItem={({item}) => (
               <TouchableOpacity
-                style={styles.addToCartButton}
+                style={styles.card}
                 onPress={() => {
                   if (redirectURL) {
                     Linking.openURL(redirectURL);
                   }
                 }}>
-                <Text style={styles.addToCartText}>{t('add_to_cart')}</Text>
+                <Image
+                  source={item.image}
+                  style={styles.productImage}
+                  resizeMode="cover"
+                />
+                <Text style={styles.productName}>{t(item.name)}</Text>
+                <Text style={styles.productType}>{t(item.type)}</Text>
+                {/* <Text style={styles.productPrice}>
+                {t('price')}: {item.price}
+              </Text> */}
+                <TouchableOpacity
+                  style={styles.addToCartButton}
+                  onPress={() => {
+                    if (redirectURL) {
+                      Linking.openURL(redirectURL);
+                    }
+                  }}>
+                  <Text style={styles.addToCartText}>{t('add_to_cart')}</Text>
+                </TouchableOpacity>
               </TouchableOpacity>
-            </TouchableOpacity>
-          )}
-        />
-      )}
-    </View>
+            )}
+          />
+        )}
+      </View>
+    </SafeAreaWrapper>
   );
 }
 const styles = StyleSheet.create({

@@ -8,10 +8,10 @@ import {
   Alert,
   Modal,
   Platform,
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import auth from '@react-native-firebase/auth';
-import {ScrollView} from 'react-native-gesture-handler';
 import {storage} from '../utils/storage';
 import firestore from '@react-native-firebase/firestore';
 import SkinAnalysisModal from '../components/SkinInsightsModal';
@@ -19,6 +19,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import i18n from '../config/i18';
 import {useTranslation} from 'react-i18next';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import SafeAreaWrapper from '../navigation/SafeAreaViewWrapper';
 
 const ProfileScreen = ({navigation}) => {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -124,150 +125,159 @@ const ProfileScreen = ({navigation}) => {
     setShowPicker(null);
   };
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back-ios" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t('profile_heading')}</Text>
-        <TouchableOpacity onPress={() => setShowSettingsModal(true)}>
-          <Icon name="settings" size={24} color="#000" />
-        </TouchableOpacity>
-      </View>
+    <SafeAreaWrapper>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back-ios" size={24} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{t('profile_heading')}</Text>
+          <TouchableOpacity onPress={() => setShowSettingsModal(true)}>
+            <Icon name="settings" size={24} color="#000" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Settings Modal */}
-      <Modal
-        visible={showSettingsModal}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowSettingsModal(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.modalOption} onPress={handleLogout}>
-              <Text style={styles.modalOptionText}>{t('profile_logout')}</Text>
-            </TouchableOpacity>
+        {/* Settings Modal */}
+        <Modal
+          visible={showSettingsModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowSettingsModal(false)}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.modalOption}
+                onPress={handleLogout}>
+                <Text style={styles.modalOptionText}>
+                  {t('profile_logout')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalOption}
+                onPress={() => setShowSettingsModal(false)}>
+                <Text style={[styles.modalOptionText, styles.cancelText]}>
+                  {t('cancel')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          {/* Profile Section */}
+          <View style={styles.profileSection}>
+            {userData?.photoUrl ? (
+              <Image
+                source={{uri: userData.photoURL}}
+                style={styles.profileImage}
+              />
+            ) : (
+              <View>
+                <Fontisto
+                  name={userDetails?.gender === 'Male' ? 'male' : 'female'}
+                  size={50}
+                  color="black"
+                  style={styles.defaultIcon}
+                />
+              </View>
+            )}
+            <Text style={styles.profileName}>
+              {userData?.name || t('profile_name')}
+            </Text>
+            <Text style={styles.profileEmail}>
+              {userData?.email || t('profile_email')}
+            </Text>
+          </View>
+
+          {/* Concern and Goal Tabs */}
+          <View style={styles.tabsContainer}>
             <TouchableOpacity
-              style={styles.modalOption}
-              onPress={() => setShowSettingsModal(false)}>
-              <Text style={[styles.modalOptionText, styles.cancelText]}>
-                {t('cancel')}
+              style={[styles.tab, activeTab === 'Concerns' && styles.activeTab]}
+              onPress={() => setActiveTab('Concerns')}>
+              <Text
+                style={
+                  activeTab === 'Concerns'
+                    ? styles.tabTextActive
+                    : styles.tabText
+                }>
+                {t('profile_concerns')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.tab, activeTab === 'Goal' && styles.activeTab]}
+              onPress={() => setActiveTab('Goal')}>
+              <Text
+                style={
+                  activeTab === 'Goal' ? styles.tabTextActive : styles.tabText
+                }>
+                {t('profile_goal')}
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Profile Section */}
-        <View style={styles.profileSection}>
-          {userData?.photoUrl ? (
-            <Image
-              source={{uri: userData.photoURL}}
-              style={styles.profileImage}
-            />
-          ) : (
-            <View>
-              <Fontisto
-                name={userDetails?.gender === 'Male' ? 'male' : 'female'}
-                size={50}
-                color="black"
-                style={styles.defaultIcon}
-              />
-            </View>
-          )}
-          <Text style={styles.profileName}>
-            {userData?.name || t('profile_name')}
-          </Text>
-          <Text style={styles.profileEmail}>
-            {userData?.email || t('profile_email')}
-          </Text>
-        </View>
-
-        {/* Concern and Goal Tabs */}
-        <View style={styles.tabsContainer}>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'Concerns' && styles.activeTab]}
-            onPress={() => setActiveTab('Concerns')}>
-            <Text
-              style={
-                activeTab === 'Concerns' ? styles.tabTextActive : styles.tabText
-              }>
-              {t('profile_concerns')}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'Goal' && styles.activeTab]}
-            onPress={() => setActiveTab('Goal')}>
-            <Text
-              style={
-                activeTab === 'Goal' ? styles.tabTextActive : styles.tabText
-              }>
-              {t('profile_goal')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Concerns or Goals List */}
-        <View style={styles.concernsContainer}>
-          {activeTab === 'Concerns' ? (
-            skinFactors?.concerns?.length > 0 ? (
-              skinFactors?.concerns.map((concern, index) => (
-                <Text key={index} style={styles.concernItem}>
-                  • {concern?.label}
+          {/* Concerns or Goals List */}
+          <View style={styles.concernsContainer}>
+            {activeTab === 'Concerns' ? (
+              skinFactors?.concerns?.length > 0 ? (
+                skinFactors?.concerns.map((concern, index) => (
+                  <Text key={index} style={styles.concernItem}>
+                    • {concern?.label}
+                  </Text>
+                ))
+              ) : (
+                <Text style={styles.concernItem}>
+                  {t('profile_no_concerns')}
                 </Text>
-              ))
+              )
+            ) : skinFactors?.goals ? (
+              <Text style={styles.concernItem}>
+                • {skinFactors?.goals?.label}
+              </Text>
             ) : (
-              <Text style={styles.concernItem}>{t('profile_no_concerns')}</Text>
-            )
-          ) : skinFactors?.goals ? (
-            <Text style={styles.concernItem}>
-              • {skinFactors?.goals?.label}
-            </Text>
-          ) : (
-            <Text style={styles.concernItem}>{t('profile_no_goals')}</Text>
-          )}
-        </View>
-
-        {/* Factors Section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('profile_factors')}</Text>
-            <TouchableOpacity
-              style={{marginBottom: 25}}
-              onPress={() => {
-                navigation.navigate('MainStack', {screen: 'SignupFlow'});
-              }}>
-              <Icon name="edit" size={20} color="#007AFF" />
-            </TouchableOpacity>
+              <Text style={styles.concernItem}>{t('profile_no_goals')}</Text>
+            )}
           </View>
 
-          <View style={styles.factorItem}>
-            <Text style={styles.factorLabel}>{t('profile_skin_type')}</Text>
-            <Text style={styles.factorValue}>
-              {skinFactors?.skin_type || 'N/A'}
-            </Text>
+          {/* Factors Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('profile_factors')}</Text>
+              <TouchableOpacity
+                style={{marginBottom: 25}}
+                onPress={() => {
+                  navigation.navigate('MainStack', {screen: 'SignupFlow'});
+                }}>
+                <Icon name="edit" size={20} color="#007AFF" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.factorItem}>
+              <Text style={styles.factorLabel}>{t('profile_skin_type')}</Text>
+              <Text style={styles.factorValue}>
+                {skinFactors?.skin_type || 'N/A'}
+              </Text>
+            </View>
+
+            <View style={styles.factorItem}>
+              <Text style={styles.factorLabel}>{t('profile_skin_tone')}</Text>
+              <Text style={styles.factorValue}>
+                {skinFactors?.skin_tone || 'N/A'}
+              </Text>
+            </View>
+
+            <View style={styles.factorItem}>
+              <Text style={styles.factorLabel}>{t('profile_experience')}</Text>
+              <Text style={styles.factorValue}>
+                {skinFactors?.experience_level || 'N/A'}
+              </Text>
+            </View>
           </View>
 
-          <View style={styles.factorItem}>
-            <Text style={styles.factorLabel}>{t('profile_skin_tone')}</Text>
-            <Text style={styles.factorValue}>
-              {skinFactors?.skin_tone || 'N/A'}
-            </Text>
-          </View>
-
-          <View style={styles.factorItem}>
-            <Text style={styles.factorLabel}>{t('profile_experience')}</Text>
-            <Text style={styles.factorValue}>
-              {skinFactors?.experience_level || 'N/A'}
-            </Text>
-          </View>
-        </View>
-
-        {/* Notification Timings Section */}
-        {/* <View style={styles.section}> */}
-        {/* <View style={[styles.sectionHeader, {alignItems: 'center'}]}>
+          {/* Notification Timings Section */}
+          {/* <View style={styles.section}> */}
+          {/* <View style={[styles.sectionHeader, {alignItems: 'center'}]}>
             <Text style={styles.sectionTitle}>
               {t('profile_notifications')}
             </Text>
@@ -279,8 +289,8 @@ const ProfileScreen = ({navigation}) => {
             />
           </View> */}
 
-        {/* Morning Notification */}
-        {/* <TouchableOpacity
+          {/* Morning Notification */}
+          {/* <TouchableOpacity
             style={styles.timePicker}
             onPress={() => setShowPicker('morning')}>
             <Text style={styles.factorLabel}>{t('profile_morning')}</Text>
@@ -292,8 +302,8 @@ const ProfileScreen = ({navigation}) => {
             </Text>
           </TouchableOpacity> */}
 
-        {/* Evening Notification */}
-        {/* <TouchableOpacity
+          {/* Evening Notification */}
+          {/* <TouchableOpacity
             style={styles.timePicker}
             onPress={() => setShowPicker('evening')}>
             <Text style={styles.factorLabel}>{t('profile_evening')}</Text>
@@ -305,7 +315,7 @@ const ProfileScreen = ({navigation}) => {
             </Text>
           </TouchableOpacity> */}
 
-        {/* {showPicker && (
+          {/* {showPicker && (
             <DateTimePicker
               value={showPicker === 'morning' ? morningTime : eveningTime}
               mode="time"
@@ -313,22 +323,25 @@ const ProfileScreen = ({navigation}) => {
               onChange={handleTimeChange}
             />
           )} */}
-        {/* </View> */}
+          {/* </View> */}
 
-        {/* Scan Insights */}
-        <TouchableOpacity
-          style={styles.insightsButton}
-          onPress={() => setopenScanModal(true)}>
-          <Text style={styles.insightsText}>{t('profile_scan_insights')}</Text>
-        </TouchableOpacity>
-        <SkinAnalysisModal
-          analysisResult={result}
-          imageToShow={''}
-          modalVisible={openScanModal}
-          setModalVisible={setopenScanModal}
-        />
-      </ScrollView>
-    </View>
+          {/* Scan Insights */}
+          <TouchableOpacity
+            style={styles.insightsButton}
+            onPress={() => setopenScanModal(true)}>
+            <Text style={styles.insightsText}>
+              {t('profile_scan_insights')}
+            </Text>
+          </TouchableOpacity>
+          <SkinAnalysisModal
+            analysisResult={result}
+            imageToShow={''}
+            modalVisible={openScanModal}
+            setModalVisible={setopenScanModal}
+          />
+        </ScrollView>
+      </View>
+    </SafeAreaWrapper>
   );
 };
 

@@ -17,9 +17,6 @@ const Gender = ({navigation}) => {
   useEffect(() => {
     // Retrieve gender from MMKV if available
     const storedData = storage.getString('onboarding_data');
-    console.log('kk', storedData);
-    console.log('All MMKV Keys:', storage.getAllKeys());
-
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       if (parsedData?.gender) {
@@ -28,13 +25,18 @@ const Gender = ({navigation}) => {
     }
   }, []);
 
-  const handleGenderSelect = gender => {
-    setSelectedGender(gender);
+  const handleContinue = () => {
+    if (selectedGender) {
+      saveOnboardingData({gender: selectedGender});
+      navigation.navigate('Age', {Gender: selectedGender});
+    } else {
+      Alert.alert('Please select a gender to continue.');
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Progress Bar */}
+    <SafeAreaView style={styles.safeArea}>
+      {/* PROGRESS BAR CONTAINER */}
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBar}>
           <View style={[styles.progress, {width: '12%'}]} />
@@ -42,81 +44,74 @@ const Gender = ({navigation}) => {
         <Text style={styles.progressText}>12%</Text>
       </View>
 
-      {/* Title */}
-      <View style={styles.titleContainer}>
+      {/* MAIN CONTENT (Flex 1 to take remaining space) */}
+      <View style={styles.contentContainer}>
+        {/* Title & Subtitle */}
         <Text style={styles.title}>What’s your gender?</Text>
         <Text style={styles.subtitle}>
           This will help us adjust your routine steps based on your gender
         </Text>
-      </View>
 
-      {/* Gender Options */}
-      <View style={styles.genderContainer}>
-        {[
-          {label: 'Female', icon: 'female-outline'},
-          {label: 'Male', icon: 'male-outline'},
-          // {label: 'Non-binary', icon: 'ellipse-outline'},
-        ].map(item => (
-          <TouchableOpacity
-            key={item.label}
-            style={[
-              styles.genderOption,
-              selectedGender === item.label && styles.selectedOption,
-            ]}
-            onPress={() => handleGenderSelect(item.label)}>
-            <Icon
-              name={item.icon}
-              size={30}
-              color={selectedGender === item.label ? 'green' : 'white'}
-            />
-            <Text
+        {/* Gender Choices */}
+        <View style={styles.genderRow}>
+          {[
+            {label: 'Female', icon: 'female-outline'},
+            {label: 'Male', icon: 'male-outline'},
+          ].map(item => (
+            <TouchableOpacity
+              key={item.label}
               style={[
-                styles.genderText,
-                selectedGender === item.label && styles.selectedText,
-              ]}>
-              {item.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+                styles.genderOption,
+                selectedGender === item.label && styles.selectedOption,
+              ]}
+              onPress={() => setSelectedGender(item.label)}>
+              <Icon
+                name={item.icon}
+                size={30}
+                color={selectedGender === item.label ? 'green' : 'white'}
+              />
+              <Text
+                style={[
+                  styles.genderText,
+                  selectedGender === item.label && styles.selectedText,
+                ]}>
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
 
-      {/* Continue Button */}
-      <TouchableOpacity
-        style={styles.continueButton}
-        onPress={() => {
-          if (selectedGender) {
-            console.log(`Selected Gender: ${selectedGender}`);
-
-            saveOnboardingData({gender: selectedGender});
-
-            navigation.navigate('Age', {Gender: selectedGender});
-          } else {
-            Alert.alert('Please select a gender to continue.');
-          }
-        }}>
+      {/* CONTINUE BUTTON (No absolute positioning) */}
+      <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
         <Text style={styles.continueText}>Continue</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
+export default Gender;
+
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
+    paddingHorizontal: 20,
   },
   progressBarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 10, // slight space from top
     marginBottom: 20,
+    width: '90%',
+    alignSelf: 'center',
   },
   progressBar: {
     flex: 1,
     height: 4,
     backgroundColor: '#e0e0e0',
     borderRadius: 2,
-    marginRight: 10,
+    marginRight: 8,
   },
   progress: {
     height: '100%',
@@ -127,33 +122,35 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
   },
-  titleContainer: {
-    alignItems: 'center',
-    marginBottom: 40,
-    flex: 1,
-    justifyContent: 'center',
+  contentContainer: {
+    flex: 1, // takes all remaining space
+    justifyContent: 'center', // center content vertically
+    alignItems: 'center', // center content horizontally
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
+    marginBottom: 10,
   },
   subtitle: {
     fontSize: 14,
     color: '#666',
     textAlign: 'center',
-    marginTop: 10,
+    marginBottom: 30,
+    paddingHorizontal: 20,
   },
-  genderContainer: {
+  genderRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    bottom: 150,
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 30,
   },
   genderOption: {
-    width: '30%',
+    width: '40%',
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 20,
     borderRadius: 10,
     backgroundColor: 'black',
   },
@@ -173,7 +170,9 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
-    // marginBottom: 4,
+    marginVertical: 20,
+    width: '90%',
+    alignSelf: 'center',
   },
   continueText: {
     color: 'white',
@@ -181,5 +180,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-export default Gender;

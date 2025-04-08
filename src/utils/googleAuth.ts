@@ -16,8 +16,12 @@ export const configureGoogleSignIn = () => {
 };
 
 // Google Sign-In Function
-export const handleGoogleSignIn = async navigation => {
+export const handleGoogleSignIn = async (
+  navigation: any,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
   try {
+    setLoading(true);
     await GoogleSignin.hasPlayServices();
     const userInfo = await GoogleSignin.signIn();
     console.log('Google User Info:', userInfo);
@@ -65,7 +69,7 @@ export const handleGoogleSignIn = async navigation => {
     }
   } catch (error) {
     console.error('Google Sign-In Error:', error);
-
+    setLoading(false);
     if (error.code === statusCodes.SIGN_IN_CANCELLED) {
       console.log('User cancelled sign-in');
     } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -76,5 +80,7 @@ export const handleGoogleSignIn = async navigation => {
       console.error('Google Sign-In Error:', error);
     }
     return null;
+  } finally {
+    setLoading(false);
   }
 };

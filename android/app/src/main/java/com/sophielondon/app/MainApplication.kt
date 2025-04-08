@@ -1,4 +1,4 @@
-package com.sophielondon
+package com.sophielondon.app
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -19,6 +19,7 @@ import i18n, {changeLanguage} from '../config/i18';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import notifee from '@notifee/react-native';
 import {storage} from '../utils/storage';
+import SafeAreaWrapper from '../navigation/SafeAreaViewWrapper';
 
 interface NotificationData {
   id: string;
@@ -136,143 +137,149 @@ const HomeScreen = () => {
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header Section */}
-      <View style={styles.header}>
-        <Text style={styles.title}>SOPHIE</Text>
-        <View style={styles.iconContainer}>
-          <TouchableOpacity
-            style={styles.bellIcon}
-            onPress={async () => {
-              await fetchDisplayedNotifications();
-              setNotificationModalVisible(true);
-            }}
-            // onPress={handleScheduleReminder}
-          >
-            <Text>🔔</Text>
-          </TouchableOpacity>
-          {/* Language Switch Icon */}
-          <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-            style={styles.languageSwitcher}>
-            <FontAwesome name="language" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Modal for Notifications */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={notificationModalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Notifications</Text>
-
-            {/* List of Notifications */}
-            <FlatList
-              data={notifications}
-              ListEmptyComponent={() => (
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No notifications yet 📭</Text>
-                </View>
-              )}
-              keyExtractor={item => item.id}
-              renderItem={({item}) => (
-                <View style={styles.notificationItem}>
-                  <Text style={styles.notificationText}>{item.body}</Text>
-                </View>
-              )}
-            />
-
-            {/* Close Button */}
+    <SafeAreaWrapper>
+      <ScrollView style={styles.container}>
+        {/* Header Section */}
+        <View style={styles.header}>
+          <Text style={styles.title}>SOPHIE</Text>
+          <View style={styles.iconContainer}>
             <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setNotificationModalVisible(false)}>
-              <Text style={styles.closeButtonText}>Close</Text>
+              style={styles.bellIcon}
+              onPress={async () => {
+                await fetchDisplayedNotifications();
+                setNotificationModalVisible(true);
+              }}
+              // onPress={handleScheduleReminder}
+            >
+              <Text>🔔</Text>
+            </TouchableOpacity>
+            {/* Language Switch Icon */}
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              style={styles.languageSwitcher}>
+              <FontAwesome name="language" size={24} color="black" />
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
 
-      {/* Language Selection Modal */}
-      <Modal
-        visible={isModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{t('select_language')}</Text>
+        {/* Modal for Notifications */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={notificationModalVisible}
+          onRequestClose={() => setModalVisible(false)}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Notifications</Text>
 
-            <TouchableOpacity
-              onPress={() => selectLanguage('en')}
-              style={styles.languageOption}>
-              <Text style={styles.languageText}>{t('english')}</Text>
-            </TouchableOpacity>
+              {/* List of Notifications */}
+              <FlatList
+                data={notifications}
+                ListEmptyComponent={() => (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>
+                      No notifications yet 📭
+                    </Text>
+                  </View>
+                )}
+                keyExtractor={item => item.id}
+                renderItem={({item}) => (
+                  <View style={styles.notificationItem}>
+                    <Text style={styles.notificationText}>{item.body}</Text>
+                  </View>
+                )}
+              />
 
-            <TouchableOpacity
-              onPress={() => selectLanguage('tr')}
-              style={styles.languageOption}>
-              <Text style={styles.languageText}>{t('turkish')}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setModalVisible(false)}
-              style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>{t('cancel')}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Face Scan Section */}
-      <View style={styles.scanSection}>
-        <Image
-          style={styles.faceImage}
-          source={require('../assets/images/face_scan.jpg')}
-        />
-        <TouchableOpacity
-          style={styles.scanButton}
-          onPress={() => navigate('ScanFace', {})}>
-          <Text style={styles.scanButtonText}>{t('tap_to_scan')}</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Range of Products Section */}
-      <ProductCard />
-
-      {/* Consult Dermatologist Section */}
-      {/* <DermatologistsList /> */}
-
-      {/* Know Your Skin Section */}
-      <KnowYourSkinCard />
-
-      {/* Our Results Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('our_results')}</Text>
-        {/* <View style={styles.resultsRow}> */}
-        <FlatList
-          data={reviews}
-          keyExtractor={(item, index) => index.toString()}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: 10,
-            // backgroundColor: 'green',
-            // width: '90%',
-          }}
-          renderItem={({item}) => (
-            <View style={styles.resultCard}>
-              <Image style={styles.resultImage} source={item.url} />
-              <Text>{item.name}</Text>
-              <Text>⭐ {item.rating}</Text>
-              <Text>{item.review}</Text>
+              {/* Close Button */}
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setNotificationModalVisible(false)}>
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
             </View>
-          )}
-        />
-        {/* <View style={styles.resultCard}>
+          </View>
+        </Modal>
+
+        {/* Language Selection Modal */}
+        <Modal
+          visible={isModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setModalVisible(false)}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>{t('select_language')}</Text>
+
+              <TouchableOpacity
+                onPress={() => selectLanguage('en')}
+                style={styles.languageOption}>
+                <Text style={styles.languageText}>{t('english')}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => selectLanguage('tr')}
+                style={styles.languageOption}>
+                <Text style={styles.languageText}>{t('turkish')}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>{t('cancel')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Face Scan Section */}
+        <View style={styles.scanSection}>
+          <View style={styles.imageWrapper}>
+            <Image
+              style={styles.faceImage}
+              resizeMode="stretch" // Ensures the whole image is visible
+              source={require('../assets/images/face_scan.jpg')}
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.scanButton}
+            onPress={() => navigate('ScanFace', {})}>
+            <Text style={styles.scanButtonText}>{t('tap_to_scan')}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Range of Products Section */}
+        <ProductCard />
+
+        {/* Consult Dermatologist Section */}
+        {/* <DermatologistsList /> */}
+
+        {/* Know Your Skin Section */}
+        <KnowYourSkinCard />
+
+        {/* Our Results Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t('our_results')}</Text>
+          {/* <View style={styles.resultsRow}> */}
+          <FlatList
+            data={reviews}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingHorizontal: 10,
+              // backgroundColor: 'green',
+              // width: '90%',
+            }}
+            renderItem={({item}) => (
+              <View style={styles.resultCard}>
+                <Image style={styles.resultImage} source={item.url} />
+                <Text>{item.name}</Text>
+                <Text>⭐ {item.rating}</Text>
+                <Text>{item.review}</Text>
+              </View>
+            )}
+          />
+          {/* <View style={styles.resultCard}>
             <Image
               style={styles.resultImage}
               source={require('../assets/images/Saily.png')}
@@ -281,12 +288,13 @@ const HomeScreen = () => {
             <Text>⭐ 5.0</Text>
             <Text>Lorem ipsum dolor sit amet consectetur.</Text>
           </View> */}
-      </View>
-      {/* </View> */}
+        </View>
+        {/* </View> */}
 
-      {/* Bottom Navigation */}
-      <View style={{height: 250, width: 10}}></View>
-    </ScrollView>
+        {/* Bottom Navigation */}
+        <View style={{height: 250, width: 10}}></View>
+      </ScrollView>
+    </SafeAreaWrapper>
   );
 };
 
@@ -314,11 +322,17 @@ const styles = StyleSheet.create({
 
   scanSection: {
     alignItems: 'center',
-    height: '20%',
+    height: '25%',
     marginBottom: '5%',
     marginTop: '5%',
+    backgroundColor: '#E3D09D',
   },
-  faceImage: {width: '100%', height: '100%', borderRadius: 10, marginBottom: 8},
+  imageWrapper: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#E3D09D', // Use a background color that complements the image
+  },
+  faceImage: {width: '100%', height: '100%', borderRadius: 10},
   scanButton: {
     backgroundColor: '#fff',
     paddingHorizontal: 25,

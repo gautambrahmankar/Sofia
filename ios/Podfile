@@ -1,12 +1,24 @@
 # Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+def node_require(script)
+  # Resolve script with node to allow for hoisting
+  require Pod::Executable.execute_command('node', ['-p',
+    "require.resolve(
+      '#{script}',
+      {paths: [process.argv[1]]},
+    )", __dir__]).strip
+end
+
+node_require('react-native/scripts/react_native_pods.rb')
+node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+
+
+setup_permissions([
+  'Camera',
+  'Notifications',
+])
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -14,12 +26,15 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'SophieLondon' do
+target 'sophie' do
   config = use_native_modules!
 
   use_frameworks! :linkage => :static
   $RNFirebaseAsStaticFramework = true
-
+# $FirebaseSDKVersion = '10.15.0'
+# pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+#   'FaceDetectorMLKit'
+# ]
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -28,6 +43,17 @@ target 'SophieLondon' do
   )
 
   post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      if target.name == 'BoringSSL-GRPC'
+        target.source_build_phase.files.each do |file|
+          if file.settings && file.settings['COMPILER_FLAGS']
+            flags = file.settings['COMPILER_FLAGS'].split
+            flags.reject! { |flag| flag == '-GCC_WARN_INHIBIT_ALL_WARNINGS' }
+            file.settings['COMPILER_FLAGS'] = flags.join(' ')
+          end
+        end
+      end
+    end
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,

@@ -152,6 +152,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 20,
+    width: '90%',
+    alignSelf: 'center',
   },
   progressBar: {
     flex: 1,
@@ -216,6 +218,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 20,
+    width: '90%',
+    alignSelf: 'center',
   },
   continueText: {
     color: 'white',

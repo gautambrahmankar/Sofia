@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -7,15 +7,54 @@ import {
   StyleSheet,
   Dimensions,
   Platform,
+  Alert,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
 import {handleGoogleSignIn} from '../utils/googleAuth';
+import Loader from '../components/Loader';
+import auth from '@react-native-firebase/auth';
+import appleAuth from '@invertase/react-native-apple-authentication';
 
 const {height, width} = Dimensions.get('window');
 
 function SignupScreen({navigation}: {navigation: any}) {
+  const [loading, setloading] = useState(false);
+  const handleAppleLogin = async () => {
+    try {
+      setloading(true);
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
+
+      const {user, identityToken, email, fullName} = appleAuthRequestResponse;
+
+      if (!identityToken) {
+        Alert.alert('Login Failed', 'No identity token returned');
+        return;
+      }
+
+      // Example: send token to Firebase or your own backend
+      const appleCredential = auth.AppleAuthProvider.credential(
+        identityToken,
+        appleAuthRequestResponse.nonce, // optional
+      );
+
+      await auth().signInWithCredential(appleCredential);
+
+      // You can now navigate to the app or save user data
+      console.log('Apple Login success:', {user, email, fullName});
+    } catch (error) {
+      console.warn('Apple Sign-In Error:', error);
+      setloading(false);
+      Alert.alert('Login Error', 'Something went wrong during Apple Sign-In');
+    } finally {
+      setloading(false);
+    }
+  };
+
   return (
     <View style={{flex: 1}}>
       {/* Gradient Section */}
@@ -41,7 +80,7 @@ function SignupScreen({navigation}: {navigation: any}) {
         {Platform.OS === 'ios' && (
           <TouchableOpacity
             style={[styles.button, styles.appleButton]}
-            onPress={() => navigation.navigate('SignupApple')}>
+            onPress={handleAppleLogin}>
             <FontAwesome
               name="apple"
               size={20}
@@ -70,7 +109,7 @@ function SignupScreen({navigation}: {navigation: any}) {
         {/* Sign up with Google */}
         <TouchableOpacity
           style={[styles.button, styles.googleButton]}
-          onPress={() => handleGoogleSignIn(navigation)}>
+          onPress={() => handleGoogleSignIn(navigation, setloading)}>
           <FontAwesome
             name="google"
             size={20}
@@ -94,6 +133,7 @@ function SignupScreen({navigation}: {navigation: any}) {
           </Text>
         </View>
       </View>
+      <Loader visible={loading} message="Signing you in..." />
     </View>
   );
 }
