@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Walkway Expand UltraBold',
     marginLeft: 5,
   },
   title: {

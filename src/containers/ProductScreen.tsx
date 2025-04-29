@@ -13,6 +13,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {goBack} from '../navigation/navigationUtils';
 import SafeAreaWrapper from '../navigation/SafeAreaViewWrapper';
+import ProductCard from '../components/ProductCard';
+import ProductCarousel from '../components/ProductCarousel';
 
 const categoryMap = {
   all: 'all',
@@ -26,7 +28,7 @@ const categoryMap = {
 const products = [
   {
     id: 1,
-    name: 'Sophie Cosmetics London - Anti-Aging Cream 50 ML',
+    name: 'Anti-Aging Cream 50 ML',
     type: 'Anti-Aging',
     price: '$56.00',
     image: require('../assets/images/Anti_Aging.jpg'),
@@ -34,35 +36,35 @@ const products = [
   },
   {
     id: 2,
-    name: 'Sophie Cosmetics London - Face Cleanser Gel 100ML',
+    name: 'Face Cleanser Gel 100ML',
     type: 'Face Cleanser',
     price: '$56.00',
     image: require('../assets/images/Face_Cleanser.jpg'),
   },
   {
     id: 3,
-    name: 'Sophie Cosmetics London - Hair Care Oil',
+    name: 'Hair Care Oil',
     type: 'Hair Care',
     price: '$56.00',
     image: require('../assets/images/Hair_Care_Oil.jpg'),
   },
   {
     id: 4,
-    name: 'Sophie Cosmetics London - Moisturizer Hydrating Cream 50 ML',
+    name: 'Moisturizer Hydrating Cream 50 ML',
     type: 'Moisturizer',
     price: '$56.00',
     image: require('../assets/images/Mosturizer.jpg'),
   },
   {
     id: 5,
-    name: 'Sophie Cosmetics London - Two Phase Make-Up Remover 100 ML',
+    name: 'Two Phase Make-Up Remover 100 ML',
     type: 'Make-up Removal',
     price: '$56.00',
     image: require('../assets/images/Makeup_Remover.jpg'),
   },
   {
     id: 6,
-    name: 'Sophie Exclusive - The Everyday Essentials - 3-Piece Face Cleansing and Hair Care Set',
+    name: 'The Everyday Essentials - 3-Piece Face Cleansing and Hair Care Set',
     type: 'Face Cleanser',
     price: '$56.00',
     image: require('../assets/images/Hair_Care_Oil.jpg'),
@@ -113,13 +115,16 @@ export default function ProductsScreen() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <MaterialIcons
-            name="arrow-back"
-            size={24}
-            color="black"
-            onPress={goBack}
-          />
-          <Text style={styles.headerTitle}>{t('products_heading')}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color="black"
+              onPress={goBack}
+            />
+            <Text style={styles.headerTitle}>{t('products_heading')}</Text>
+          </View>
+
           <MaterialIcons name="shopping-bag" size={24} color="black" />
         </View>
 
@@ -157,40 +162,12 @@ export default function ProductsScreen() {
             </TouchableOpacity>
           </View>
         ) : (
-          <FlatList
-            data={filteredProducts}
-            // numColumns={2}
-            keyExtractor={item => `${item.id}`}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.card}
-                onPress={() => {
-                  if (redirectURL) {
-                    Linking.openURL(redirectURL);
-                  }
-                }}>
-                <Image
-                  source={item.image}
-                  style={styles.productImage}
-                  resizeMode="cover"
-                />
-                <Text style={styles.productName}>{t(item.name)}</Text>
-                <Text style={styles.productType}>{t(item.type)}</Text>
-                {/* <Text style={styles.productPrice}>
-                {t('price')}: {item.price}
-              </Text> */}
-                <TouchableOpacity
-                  style={styles.addToCartButton}
-                  onPress={() => {
-                    if (redirectURL) {
-                      Linking.openURL(redirectURL);
-                    }
-                  }}>
-                  <Text style={styles.addToCartText}>{t('add_to_cart')}</Text>
-                </TouchableOpacity>
-              </TouchableOpacity>
-            )}
-          />
+          <View style={{marginTop: 20}}>
+            <ProductCarousel
+              products={filteredProducts}
+              redirectURL={redirectURL ?? 'https://sophiecosmetix.com/'}
+            />
+          </View>
         )}
       </View>
     </SafeAreaWrapper>
@@ -211,7 +188,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Walkway Expand UltraBold',
+    marginLeft: 8,
   },
   categoryScroll: {
     flexDirection: 'row',

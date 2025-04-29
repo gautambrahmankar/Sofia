@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from '../containers/HomeScreen';
 import SignupFlow from '../containers/SignupFlow';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProfileScreen from '../containers/ProfileScreen';
 import ExploreScreen from '../containers/ExploreScreen';
@@ -15,8 +15,10 @@ const Tab = createBottomTabNavigator();
 
 // Custom Tab Bar Button for the central scan icon
 const ScanButton = ({onPress}) => (
-  <TouchableOpacity style={styles.scanButton} onPress={onPress}>
-    <Icon name="camera-alt" size={28} color="#FFF" />
+  <TouchableOpacity style={styles.scanButtonWrapper} onPress={onPress}>
+    <View style={styles.scanButton}>
+      <Icon name="camera-alt" size={28} color="#FFF" />
+    </View>
   </TouchableOpacity>
 );
 
@@ -65,7 +67,15 @@ const HomeTabs = () => {
       />
       <Tab.Screen
         name="Explore"
-        component={ExploreScreen}
+        component={() => null}
+        listeners={{
+          tabPress: e => {
+            e.preventDefault();
+            navigate('ExploreScreen', {
+              url: 'https://sophiecosmetix.com/index.php?route=journal3/blog&language=en-gb',
+            });
+          },
+        }}
         options={{
           tabBarIcon: ({focused}) => (
             <Icon
@@ -128,18 +138,22 @@ const styles = StyleSheet.create({
     borderTopWidth: 0.5,
     borderTopColor: '#E0E0E0',
   },
+  scanButtonWrapper: {
+    position: 'absolute',
+    bottom: 10,
+    alignSelf: 'center',
+  },
   scanButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#000000',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
-    top: -20,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: {width: 0, height: 4},
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.2,
+    shadowOffset: {width: 0, height: 5},
+    shadowRadius: 10,
+    elevation: 8,
   },
 });

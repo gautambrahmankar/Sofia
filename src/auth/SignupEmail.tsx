@@ -16,6 +16,10 @@ import {
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {storage} from '../utils/storage';
+import SafeAreaWrapper from '../navigation/SafeAreaViewWrapper';
+import {goBack} from '../navigation/navigationUtils';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 
 const SignupEmail = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -78,7 +82,7 @@ const SignupEmail = ({navigation}) => {
       );
 
       // Navigate to login screen
-      navigation.navigate('LoginEmail');
+      navigation.navigate('MainStack', {screen: 'SignupFlow'});
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
@@ -87,66 +91,76 @@ const SignupEmail = ({navigation}) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Sign up</Text>
-
-          <Text style={styles.label}>Email address</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Example@gmail.com"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
+    <SafeAreaWrapper>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.container}>
+        <TouchableOpacity style={styles.backButton}>
+          <MaterialIcons
+            name="arrow-back"
+            size={24}
+            color="black"
+            onPress={goBack}
           />
+        </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            keyboardShouldPersistTaps="handled">
+            <Text style={styles.title}>Sign up</Text>
 
-          <Text style={styles.label}>Create a password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="must be 8 characters"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+            <Text style={styles.label}>Email address</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Example@gmail.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
 
-          <Text style={styles.label}>Confirm password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="must be 8 characters"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-          />
+            <Text style={styles.label}>Create a password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="must be 8 characters"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-          <TouchableOpacity
-            style={[styles.button, loading && styles.disabledButton]} // Disable button when loading
-            onPress={handleSignUp}
-            disabled={loading}>
-            {loading ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Sign up</Text>
-            )}
-          </TouchableOpacity>
+            <Text style={styles.label}>Confirm password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="must be 8 characters"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+            />
 
-          <View style={styles.termsContainer}>
-            <Text style={styles.termsText}>
-              By creating an account or signing you
-            </Text>
-            <Text style={styles.termsText}>
-              agree to our{' '}
-              <Text style={styles.termsLink}>Terms and Conditions</Text>
-            </Text>
-          </View>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+            <TouchableOpacity
+              style={[styles.button, loading && styles.disabledButton]} // Disable button when loading
+              onPress={handleSignUp}
+              disabled={loading}>
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Sign up</Text>
+              )}
+            </TouchableOpacity>
+
+            <View style={styles.termsContainer}>
+              <Text style={styles.termsText}>
+                By creating an account or signing you
+              </Text>
+              <Text style={styles.termsText}>
+                agree to our{' '}
+                <Text style={styles.termsLink}>Terms and Conditions</Text>
+              </Text>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </SafeAreaWrapper>
   );
 };
 
@@ -219,6 +233,11 @@ const styles = StyleSheet.create({
   termsLink: {
     color: '#000000',
     fontWeight: 'bold',
+  },
+  backButton: {
+    marginBottom: 10,
+    // alignSelf: 'flex-start',
+    paddingVertical: 5,
   },
 });
 

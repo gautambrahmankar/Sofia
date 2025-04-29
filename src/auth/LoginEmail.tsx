@@ -17,6 +17,9 @@ import {
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {storage} from '../utils/storage';
+import SafeAreaWrapper from '../navigation/SafeAreaViewWrapper';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {goBack} from '../navigation/navigationUtils';
 
 const LoginEmail = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -91,66 +94,76 @@ const LoginEmail = ({navigation}) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Log in</Text>
-
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
+    <SafeAreaWrapper>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.container}>
+        <TouchableOpacity
+          style={styles.backButton}>
+          <MaterialIcons
+            name="arrow-back"
+            size={24}
+            color="black"
+            onPress={goBack}
           />
+        </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            keyboardShouldPersistTaps="handled">
+            <Text style={styles.title}>Log in</Text>
 
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ForgotPasswordScreen')}>
-            <Text style={styles.forgotPassword}>Forgot password?</Text>
-          </TouchableOpacity>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-          <TouchableOpacity
-            style={[styles.button, loading && styles.disabledButton]} // Disable button while loading
-            onPress={handleSignIn}
-            disabled={loading}>
-            {loading ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Log in</Text>
-            )}
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ForgotPasswordScreen')}>
+              <Text style={styles.forgotPassword}>Forgot password?</Text>
+            </TouchableOpacity>
 
-          <Text style={styles.signUpText}>
-            Don’t have an account?{' '}
-            <Text
-              style={styles.signUpLink}
-              onPress={() => navigation.navigate('SignupScreen')}>
-              Sign up
+            <TouchableOpacity
+              style={[styles.button, loading && styles.disabledButton]} // Disable button while loading
+              onPress={handleSignIn}
+              disabled={loading}>
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Log in</Text>
+              )}
+            </TouchableOpacity>
+
+            <Text style={styles.signUpText}>
+              Don’t have an account?{' '}
+              <Text
+                style={styles.signUpLink}
+                onPress={() => navigation.navigate('SignupScreen')}>
+                Sign up
+              </Text>
             </Text>
-          </Text>
 
-          {/* <View style={styles.orContainer}>
+            {/* <View style={styles.orContainer}>
             <View style={styles.line} />
             <Text style={styles.orText}>Or Login with</Text>
             <View style={styles.line} />
           </View> */}
 
-          {/* <View style={styles.socialContainer}>
+            {/* <View style={styles.socialContainer}>
             <TouchableOpacity style={styles.socialButton}>
               <Image
                 source={require('../assets/images/facebook.png')}
@@ -170,9 +183,10 @@ const LoginEmail = ({navigation}) => {
               />
             </TouchableOpacity>
           </View> */}
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </SafeAreaWrapper>
   );
 };
 
@@ -274,6 +288,11 @@ const styles = StyleSheet.create({
   signUpLink: {
     fontWeight: 'bold',
     color: '#000',
+  },
+  backButton: {
+    marginBottom: 10,
+    // alignSelf: 'flex-start',
+    paddingVertical: 5,
   },
 });
 

@@ -28,7 +28,7 @@ const SplashScreenVideo = () => {
     <View style={styles.container}>
       <Video
         ref={videoRef}
-        source={require('../../assets/videos/splash_video.mov')}
+        source={require('../../assets/videos/splash_video.mp4')}
         style={styles.video}
         resizeMode="cover"
         muted={true}

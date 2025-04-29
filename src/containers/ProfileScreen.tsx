@@ -20,6 +20,9 @@ import i18n from '../config/i18';
 import {useTranslation} from 'react-i18next';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import SafeAreaWrapper from '../navigation/SafeAreaViewWrapper';
+import {goBack} from '../navigation/navigationUtils';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import DeleteAccountButton from '../components/DeleteAccountButton';
 
 const ProfileScreen = ({navigation}) => {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -32,6 +35,7 @@ const ProfileScreen = ({navigation}) => {
   const [eveningTime, setEveningTime] = useState(new Date());
   const [showPicker, setShowPicker] = useState(null);
   const [userDetails, setuserDetails] = useState({});
+  const [scanResult, setScanResult] = useState(null);
 
   useEffect(() => {
     const storedUser = storage.getString('user_data');
@@ -42,6 +46,12 @@ const ProfileScreen = ({navigation}) => {
       setUserData(parsedUser);
 
       fetchOnboardingData(parsedUser?.uid);
+    }
+
+    const storedScanResult = storage.getString('scanResult');
+    if (storedScanResult) {
+      setScanResult(JSON.parse(storedScanResult));
+      console.log('Loaded scanResult from MMKV:', JSON.parse(storedScanResult));
     }
   }, []);
 
@@ -76,31 +86,6 @@ const ProfileScreen = ({navigation}) => {
     }
   };
 
-  const result = {
-    skinHealth: 75,
-    skinAge: 25,
-    concerns: [
-      {name: 'Pores', percentage: 10},
-      {name: 'Acne', percentage: 5},
-      {name: 'Dark Circles', percentage: 15},
-      {name: 'Dark Spots', percentage: 5},
-    ],
-    annotations: [
-      {
-        label: 'Dark Circles',
-        coordinates: [{x: 40, y: 50}],
-      },
-      {
-        label: 'Blackheads',
-        coordinates: [{x: 45, y: 45}],
-      },
-      {
-        label: 'Acne',
-        coordinates: [{x: 50, y: 55}],
-      },
-    ],
-  };
-
   const handleTimeChange = (selectedTime, event) => {
     console.log('slee', selectedTime);
     const selectedHour = event.getHours();
@@ -129,10 +114,16 @@ const ProfileScreen = ({navigation}) => {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back-ios" size={24} color="#000" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>{t('profile_heading')}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color="black"
+              onPress={goBack}
+            />
+            <Text style={styles.headerTitle}>{t('profile_heading')}</Text>
+          </View>
+
           <TouchableOpacity onPress={() => setShowSettingsModal(true)}>
             <Icon name="settings" size={24} color="#000" />
           </TouchableOpacity>
@@ -153,6 +144,12 @@ const ProfileScreen = ({navigation}) => {
                   {t('profile_logout')}
                 </Text>
               </TouchableOpacity>
+              
+              {/* Add Delete Account Button */}
+              <View style={styles.modalOption}>
+                <DeleteAccountButton navigation={navigation} />
+              </View>
+              
               <TouchableOpacity
                 style={styles.modalOption}
                 onPress={() => setShowSettingsModal(false)}>
@@ -326,15 +323,17 @@ const ProfileScreen = ({navigation}) => {
           {/* </View> */}
 
           {/* Scan Insights */}
-          <TouchableOpacity
-            style={styles.insightsButton}
-            onPress={() => setopenScanModal(true)}>
-            <Text style={styles.insightsText}>
-              {t('profile_scan_insights')}
-            </Text>
-          </TouchableOpacity>
+          {scanResult && (
+            <TouchableOpacity
+              style={styles.insightsButton}
+              onPress={() => setopenScanModal(true)}>
+              <Text style={styles.insightsText}>
+                {t('profile_scan_insights')}
+              </Text>
+            </TouchableOpacity>
+          )}
           <SkinAnalysisModal
-            analysisResult={result}
+            analysisResult={scanResult}
             imageToShow={''}
             modalVisible={openScanModal}
             setModalVisible={setopenScanModal}
@@ -360,8 +359,9 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontFamily: 'Walkway Expand UltraBold',
     color: '#000',
+    marginLeft: 8,
   },
   scrollContent: {
     paddingHorizontal: 16,

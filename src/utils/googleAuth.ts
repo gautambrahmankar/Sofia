@@ -30,8 +30,10 @@ export const handleGoogleSignIn = async (
 
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
     console.log('google cred', googleCredential);
+    
 
     const userCredential = await auth().signInWithCredential(googleCredential);
+    const isNewUser = userCredential.additionalUserInfo?.isNewUser;
     console.log('Firebase User Credential:', userCredential);
 
     if (userCredential) {
@@ -45,15 +47,21 @@ export const handleGoogleSignIn = async (
       };
 
       // Save user data to Firestore
-      await firestore().collection('Users').doc(user.uid).set(
-        {
-          name: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          created_at: firestore.FieldValue.serverTimestamp(),
-        },
-        {merge: true},
-      );
+      if (isNewUser) {
+        await firestore().collection('Users').doc(user.uid).set(
+          {
+            name: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            created_at: firestore.FieldValue.serverTimestamp(),
+          },
+          {merge: true},
+        );
+
+        console.log('✅ New user saved to Firestore');
+      } else {
+        console.log('✅ Existing user login');
+      }
 
       // Store user data in MMKV storage
       storage.set('user_data', JSON.stringify(userData));
@@ -61,11 +69,12 @@ export const handleGoogleSignIn = async (
       console.log('User saved to Firestore');
 
       // Navigate to MainStack
-      if (navigation) {
+      if (isNewUser) {
+        navigation.navigate('MainStack', {screen: 'SignupFlow'});
+      } else {
         navigation.navigate('MainStack');
       }
-
-      return userData; // Return user data for further usage
+      return userData;
     }
   } catch (error) {
     console.error('Google Sign-In Error:', error);

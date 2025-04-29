@@ -57,17 +57,34 @@ const SkinAnalysisModal = ({
   }, []);
 
   const handleRedirect = () => {
-    // if (redirectURL) {
-    //   Linking.openURL(redirectURL);
-    // }
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{name: 'MainStack', params: {screen: 'HomeTabs'}}],
+        routes: [
+          {
+            name: 'MainStack',
+            state: {
+              index: 0, // show just 1 route (HomeTabs) at this level
+              routes: [
+                {
+                  name: 'HomeTabs',
+                  state: {
+                    // tabs in order: 0 -> Home, 1 -> Products, etc.
+                    index: 1, // if "Products" is the second tab
+                    routes: [
+                      {name: 'Home'},
+                      {name: 'Products'},
+                      // ... other tabs ...
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
       }),
     );
   };
-
   return (
     <Modal visible={modalVisible} animationType="slide" transparent>
       <View style={styles.modalContainer}>
@@ -156,7 +173,7 @@ const styles = StyleSheet.create({
   },
   closeIcon: {
     position: 'absolute',
-    top: 15,
+    top: 35,
     right: 15,
     zIndex: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

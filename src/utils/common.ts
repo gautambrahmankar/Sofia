@@ -1,5 +1,7 @@
+import {PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 import {storage} from './storage';
 import firestore from '@react-native-firebase/firestore';
+import {Platform} from 'react-native';
 
 // Converts Open-Meteo weather codes to descriptions
 export function getWeatherDescription(code: number) {
@@ -82,3 +84,13 @@ export const submitOnboardingData = async userId => {
     console.error('Error submitting onboarding data:', error);
   }
 };
+
+export async function requestLocationPermission() {
+  const result = await request(
+    Platform.OS === 'android'
+      ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+      : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+  );
+
+  return result === RESULTS.GRANTED;
+}

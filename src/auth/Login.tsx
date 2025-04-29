@@ -14,7 +14,7 @@ const Login = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../assets/images/home_page.jpg')} // Replace with your pattern image
+        source={require('../assets/images/home_page.webp')}
         style={styles.backgroundPattern}
       />
       <View style={styles.content}></View>

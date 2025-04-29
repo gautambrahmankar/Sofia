@@ -6,6 +6,16 @@ import {Alert, Dimensions} from 'react-native';
 const genAI = new GoogleGenerativeAI(config.API_KEY);
 const {width: imageWidth, height: imageHeight} = Dimensions.get('window');
 
+function filterConcerns(data) {
+  const present = new Set(
+    data.annotations.filter(a => a.present).map(a => a.label),
+  );
+  return {
+    ...data,
+    concerns: data.concerns.filter(concern => present.has(concern.name)),
+  };
+}
+
 export const analyzeFace = async (photoUri, faces) => {
   try {
     // Convert image to base64
@@ -123,8 +133,10 @@ export const analyzeFace = async (photoUri, faces) => {
 
     // Extract JSON from the AI response
     const extractedJson = extractJsonFromText(textResponse);
-    console.log('Extracted JSON:', extractedJson);
-    return extractedJson;
+    const filteredJson = filterConcerns(extractedJson);
+
+    console.log('Extracted JSON:', filteredJson);
+    return filteredJson;
   } catch (error) {
     console.error('Error analyzing face:', error);
     return null;

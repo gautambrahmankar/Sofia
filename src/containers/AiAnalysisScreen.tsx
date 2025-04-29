@@ -28,50 +28,18 @@ const AIAnalysisScreen = ({route, navigation}) => {
 
   useEffect(() => {
     const analyzeImage = async () => {
-      Image.getSize(
-        photoUri,
-        (width, height) => {
-          console.log('img h', width, height);
-
-          setimageHeight(height);
-          setimageWidth(width);
-        },
-        error => console.error(error),
-      );
       try {
+        setLoading(true);
         console.log('photo uri', photoUri);
         const response = await analyzeFace(photoUri, faces);
 
-        const result = {
-          skinHealth: 75,
-          skinAge: 25,
-          concerns: [
-            {name: 'Pores', percentage: 10},
-            {name: 'Acne', percentage: 5},
-            {name: 'Dark Circles', percentage: 15},
-            {name: 'Dark Spots', percentage: 5},
-          ],
-          annotations: [
-            {
-              label: 'Dark Circles',
-              coordinates: [{x: 40, y: 50}],
-            },
-            {
-              label: 'Blackheads',
-              coordinates: [{x: 45, y: 45}],
-            },
-            {
-              label: 'Acne',
-              coordinates: [{x: 50, y: 55}],
-            },
-          ],
-        };
-
         console.log('res', response);
-
-        setAnalysisResult(response);
-        storage.set('scanResult', JSON.stringify(response));
+        if (response) {
+          setAnalysisResult(response);
+          storage.set('scanResult', JSON.stringify(response));
+        }
       } catch (error) {
+        setLoading(false);
         console.error('Error analyzing face:', error);
       } finally {
         setLoading(false);
@@ -103,7 +71,7 @@ const AIAnalysisScreen = ({route, navigation}) => {
     <View style={{flex: 1}}>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={{flexGrow: 1}}>
+        contentContainerStyle={{flexGrow: 1, paddingBottom: 180}}>
         {/* Top Image Section */}
         <View style={styles.rowContainer}>
           {/* Left: User Scan */}
@@ -200,8 +168,6 @@ const AIAnalysisScreen = ({route, navigation}) => {
             ) : null}
           </View>
         ))}
-
-        <View style={{height: 100}} />
       </ScrollView>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -225,6 +191,12 @@ const AIAnalysisScreen = ({route, navigation}) => {
         setModalVisible={setModalVisible}
         imageToShow={photoUri}
       />
+      {loading && (
+        <View style={styles.analyzingLoaderOverlay}>
+          <ActivityIndicator size="large" color="#fff" />
+          <Text style={styles.analyzingText}>Analysing Face...</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -389,6 +361,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  analyzingLoaderOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  analyzingText: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });
 

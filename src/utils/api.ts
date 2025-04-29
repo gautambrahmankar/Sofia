@@ -1,13 +1,40 @@
+import Geolocation from '@react-native-community/geolocation';
+
 // Get Location Using IP (No Permission Required)
 export async function getLocationFromIP() {
   try {
-    const response = await fetch('http://ip-api.com/json/');
+    const response = await fetch('https://ip-api.com/json/');
     const data = await response.json();
+    console.log(';IP Location Data:', data);
+
     return {latitude: data.lat, longitude: data.lon};
   } catch (error) {
     console.error('Error fetching IP location:', error);
     return null;
   }
+}
+
+export function getLocationUsingGPS(): Promise<{
+  latitude: number;
+  longitude: number;
+} | null> {
+  return new Promise(resolve => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        resolve({latitude, longitude});
+      },
+      error => {
+        console.error('📍 GPS Location Error:', error);
+        resolve(null);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 10000,
+      },
+    );
+  });
 }
 
 // Fetch Weather Data from Open-Meteo

@@ -16,44 +16,12 @@ import {handleGoogleSignIn} from '../utils/googleAuth';
 import Loader from '../components/Loader';
 import auth from '@react-native-firebase/auth';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import {handleAppleAuth} from '../utils/appleAuth';
 
 const {height, width} = Dimensions.get('window');
 
 function SignupScreen({navigation}: {navigation: any}) {
   const [loading, setloading] = useState(false);
-  const handleAppleLogin = async () => {
-    try {
-      setloading(true);
-      const appleAuthRequestResponse = await appleAuth.performRequest({
-        requestedOperation: appleAuth.Operation.LOGIN,
-        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-      });
-
-      const {user, identityToken, email, fullName} = appleAuthRequestResponse;
-
-      if (!identityToken) {
-        Alert.alert('Login Failed', 'No identity token returned');
-        return;
-      }
-
-      // Example: send token to Firebase or your own backend
-      const appleCredential = auth.AppleAuthProvider.credential(
-        identityToken,
-        appleAuthRequestResponse.nonce, // optional
-      );
-
-      await auth().signInWithCredential(appleCredential);
-
-      // You can now navigate to the app or save user data
-      console.log('Apple Login success:', {user, email, fullName});
-    } catch (error) {
-      console.warn('Apple Sign-In Error:', error);
-      setloading(false);
-      Alert.alert('Login Error', 'Something went wrong during Apple Sign-In');
-    } finally {
-      setloading(false);
-    }
-  };
 
   return (
     <View style={{flex: 1}}>
@@ -67,7 +35,7 @@ function SignupScreen({navigation}: {navigation: any}) {
         </Text>
 
         <Image
-          source={require('../assets/images/signup_bg.jpg')}
+          source={require('../assets/images/signup_bg.jpeg')}
           style={styles.image}
         />
       </LinearGradient>
@@ -80,7 +48,7 @@ function SignupScreen({navigation}: {navigation: any}) {
         {Platform.OS === 'ios' && (
           <TouchableOpacity
             style={[styles.button, styles.appleButton]}
-            onPress={handleAppleLogin}>
+            onPress={() => handleAppleAuth(navigation, setloading)}>
             <FontAwesome
               name="apple"
               size={20}
@@ -150,7 +118,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontFamily: 'Walkway Expand UltraBold',
     marginTop: 20,
   },
   subtitle: {
@@ -165,7 +133,7 @@ const styles = StyleSheet.create({
     height: height * 0.3,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    marginTop: 65,
+    marginVertical: 20,
     resizeMode: 'cover',
   },
   whiteContainer: {
@@ -175,7 +143,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     alignItems: 'center',
     paddingTop: 20,
-    marginTop: -height * 0.08, // To slightly overlap the gradient section
+    marginTop: -height * 0.2, // To slightly overlap the gradient section
   },
   startText: {
     fontSize: 18,
@@ -223,7 +191,7 @@ const styles = StyleSheet.create({
   footer: {
     justifyContent: 'center',
     alignSelf: 'center',
-    bottom: 10,
+    bottom: 25,
     position: 'absolute',
   },
   linkText: {

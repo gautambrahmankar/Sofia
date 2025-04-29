@@ -11,6 +11,8 @@ import {fetchWeather, getLocationFromIP} from '../utils/api';
 import {getWeatherDescription} from '../utils/common';
 import {storage} from '../utils/storage';
 import {navigationRef} from '../navigation/navigationUtils';
+import {PermissionsAndroid, Platform} from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
 
 class Notifications {
   constructor() {
@@ -80,11 +82,6 @@ class Notifications {
     console.log('has perm', hasPermissions);
 
     if (hasPermissions) {
-      // Create a timestamp trigger for the notification
-      const trigger: TimestampTrigger = {
-        type: TriggerType.TIMESTAMP, // Using timestamp trigger
-        timestamp: date.getTime(), // Convert Date to timestamp
-      };
       const channelId = await notifee.createChannel({
         id: 'important',
         name: 'Important Notifications',
@@ -129,6 +126,39 @@ class Notifications {
     }
   }
 
+  async getLocationUsingGPS(): Promise<{
+    latitude: number;
+    longitude: number;
+  } | null> {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        console.warn('Location permission not granted');
+        return null;
+      }
+    }
+
+    return new Promise(resolve => {
+      Geolocation.getCurrentPosition(
+        position => {
+          const {latitude, longitude} = position.coords;
+          resolve({latitude, longitude});
+        },
+        error => {
+          console.error('GPS Location Error:', error);
+          resolve(null);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 10000,
+        },
+      );
+    });
+  }
+
   // Schedule Notifications at 8 AM & 8 PM
   public async scheduleDailyWeatherNotifications() {
     const hasPermissions = await this.checkPermissions();
@@ -137,44 +167,13 @@ class Notifications {
     const userData = userDataString ? JSON.parse(userDataString) : null;
     const userName = userData?.name || 'User';
 
-    // Get stored morning and evening times
-    const morningTimeString = storage.getString('morning_notification');
-    const eveningTimeString = storage.getString('evening_notification');
-
-    // Default to 8 AM & 8 PM if not stored
-    // const morningTime = morningTimeString
-    //   ? new Date(morningTimeString)
-    //   : new Date();
-    // const eveningTime = eveningTimeString
-    //   ? new Date(eveningTimeString)
-    //   : new Date();
-
-    // // Ensure time is correctly set
-    // if (morningTimeString) {
-    //   morningTime.setSeconds(0);
-    //   morningTime.setMilliseconds(0);
-    // } else {
-    //   morningTime.setHours(8, 0, 0, 0);
-    // }
-
-    // if (eveningTimeString) {
-    //   eveningTime.setSeconds(0);
-    //   eveningTime.setMilliseconds(0);
-    // } else {
-    //   eveningTime.setHours(20, 0, 0, 0);
-    // }
-
-    // console.log('Scheduled Morning Time:', morningTime);
-    // console.log('Scheduled Evening Time:', eveningTime);
-
-    const location = await getLocationFromIP();
-    console.log('Location:', location);
+    const location = await this.getLocationUsingGPS();
+    console.log('📍 Location:', location);
 
     if (!location) {
-      console.warn('Location not available.');
+      console.warn('⚠️ Location not available.');
       return;
     }
-
     const weather = await fetchWeather(location.latitude, location.longitude);
 
     // 🛑 Log weather data to debug issues
@@ -221,7 +220,9 @@ class Notifications {
 
     const nightRoutineText = `Hey ${userName}, it's getting late! 🌙 Time for your night routine. 
     Keep your skin healthy overnight with our skincare essentials!`;
+    // const now = new Date();
 
+    // const fireAt = new Date(now.getTime() + 5000);
     await this.scheduleNotificationAtTime(morningTime, weatherText);
     await this.scheduleNotificationAtTime(eveningTime, nightRoutineText);
     // await this.displayImmediateNotification(nightRoutineText);
@@ -229,6 +230,41 @@ class Notifications {
     //   new Date(Date.now() + 10 * 1000),
     //   'Test Message',
     // );
+  }
+
+  public async testNotificationInProduction() {
+    try {
+      const hasPermissions = await this.checkPermissions();
+      console.log('Has notification permissions:', hasPermissions);
+
+      if (!hasPermissions) {
+        console.log('Cannot send test notification - no permission');
+        return false;
+      }
+
+      const channelId = await notifee.createChannel({
+        id: 'test-channel',
+        name: 'Test Notifications',
+        importance: AndroidImportance.HIGH,
+      });
+
+      const notificationId = await notifee.displayNotification({
+        title: '🧪 Test Notification',
+        body: 'If you see this, notifications are working in production!',
+        android: {
+          channelId,
+          pressAction: {
+            id: 'default',
+          },
+        },
+      });
+
+      console.log('Test notification displayed:', notificationId);
+      return true;
+    } catch (error) {
+      console.error('Failed to display test notification:', error);
+      return false;
+    }
   }
 
   public async displayImmediateNotification(message: string) {
@@ -262,33 +298,44 @@ class Notifications {
     const hasPermissions = await this.checkPermissions();
     if (!hasPermissions) return;
 
-    // Ensure time is a valid future time
     const now = new Date();
     if (time <= now) {
-      time.setDate(time.getDate() + 1); // Schedule for tomorrow if time has passed
+      // If time has already passed today, schedule it for tomorrow
+      time.setDate(time.getDate() + 1);
     }
 
-    console.log('Scheduling notification at:', time);
+    console.log('✅ Scheduling notification at:', time);
 
-    const trigger: TimestampTrigger = {
-      type: TriggerType.TIMESTAMP,
-      timestamp: time.getTime(),
-    };
-
+    // Create channel (Android only — iOS ignores this)
     const channelId = await notifee.createChannel({
       id: 'weather',
       name: 'Weather Updates',
       importance: AndroidImportance.HIGH,
     });
 
+    const trigger: TimestampTrigger = {
+      type: TriggerType.TIMESTAMP,
+      timestamp: time.getTime(), // must be a future timestamp
+      // iOS-only option for repeat (optional)
+      // repeatFrequency: RepeatFrequency.DAILY,
+    };
+
     await notifee.createTriggerNotification(
       {
         title: '🌤️ Weather Update',
         body: message,
         android: {
-          channelId: channelId,
+          channelId,
           pressAction: {
             id: 'default',
+          },
+        },
+        ios: {
+          // Helps make it visible while in foreground
+          foregroundPresentationOptions: {
+            alert: true,
+            sound: true,
+            badge: true,
           },
         },
       },

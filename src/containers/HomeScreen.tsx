@@ -48,13 +48,11 @@ const HomeScreen = () => {
   };
 
   const handleScheduleReminder = async () => {
-    try {
-      console.log('Scheduling daily weather notifications...');
-      await LocalNotification.scheduleDailyWeatherNotifications();
-      console.log('Successfully scheduled notifications.');
-    } catch (error) {
-      console.error('Error scheduling notification:', error);
-    }
+    const testTime = new Date(Date.now() + 5 * 1000);
+    LocalNotification.scheduleNotificationAtTime(
+      testTime,
+      'Test notification after 5 seconds 🚀',
+    );
   };
 
   const fetchDisplayedNotifications = async () => {
@@ -112,7 +110,7 @@ const HomeScreen = () => {
         'Sophie Cosmetix has some of the best beauty products I’ve tried! The quality is amazing, and everything feels so luxurious on the skin. Their formulas are gentle yet effective, and I’ve noticed a real difference since using them. Shipping was fast, and the packaging is beautiful. Definitely a brand I’ll keep coming back to!',
       likes: 1,
       response: 'We really appreciate your comment. Thank you.',
-      url: require('../assets/images/Saily.png'),
+      url: require('../assets/images/arya_Sharma.png'),
     },
     {
       name: 'Selçuk Keleş',
@@ -122,7 +120,7 @@ const HomeScreen = () => {
         'I have the perfume from the premium collection and I’m really happy, the scent stays on you all day long!',
       likes: 0,
       response: null,
-      url: require('../assets/images/Leslie.png'),
+      url: require('../assets/images/sercan_keles.png'),
     },
     {
       name: 'Sebastian Siles Roman',
@@ -132,7 +130,7 @@ const HomeScreen = () => {
         'Una variedad perfecta de productos para regalar, son de muy buena calidad 👌🏽',
       likes: 0,
       response: null,
-      url: require('../assets/images/Saily.png'),
+      url: require('../assets/images/sebestian_pic.png'),
     },
   ];
 
@@ -141,13 +139,23 @@ const HomeScreen = () => {
       <ScrollView style={styles.container}>
         {/* Header Section */}
         <View style={styles.header}>
-          <Text style={styles.title}>SOPHIE</Text>
+          {/* <Text style={styles.title}>SOPHIE</Text> */}
+          <Image
+            source={{
+              uri: 'https://sophiecosmetix.com/image/cache/catalog/journal3/Logo/sophie-retina-2481x473.png',
+            }}
+            width={150}
+            height={50}
+            style={{width: 150, height: 20}}
+            resizeMode="contain"
+          />
           <View style={styles.iconContainer}>
             <TouchableOpacity
               style={styles.bellIcon}
               onPress={async () => {
                 await fetchDisplayedNotifications();
                 setNotificationModalVisible(true);
+                // LocalNotification.displayImmediateNotification('Test');
               }}
               // onPress={handleScheduleReminder}
             >
@@ -236,8 +244,8 @@ const HomeScreen = () => {
           <View style={styles.imageWrapper}>
             <Image
               style={styles.faceImage}
-              resizeMode="stretch" // Ensures the whole image is visible
-              source={require('../assets/images/face_scan.jpg')}
+              resizeMode="cover"
+              source={require('../assets/images/face_scan.jpeg')}
             />
           </View>
           <TouchableOpacity
@@ -292,7 +300,7 @@ const HomeScreen = () => {
         {/* </View> */}
 
         {/* Bottom Navigation */}
-        <View style={{height: 250, width: 10}}></View>
+        <View style={{height: 300, width: 10}}></View>
       </ScrollView>
     </SafeAreaWrapper>
   );
@@ -314,7 +322,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontFamily: 'Walkway Expand UltraBold',
-    color: '#E3D09D',
+    color: '#38304a',
   },
   iconContainer: {flexDirection: 'row', alignItems: 'center'},
   bellIcon: {padding: 8},
@@ -332,7 +340,11 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#E3D09D', // Use a background color that complements the image
   },
-  faceImage: {width: '100%', height: '100%', borderRadius: 10},
+  faceImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  },
   scanButton: {
     backgroundColor: '#fff',
     paddingHorizontal: 25,
